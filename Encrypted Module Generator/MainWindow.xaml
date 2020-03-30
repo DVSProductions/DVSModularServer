@@ -1,0 +1,62 @@
+﻿<Window x:Class="Encrypted_Module_Generator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Encrypted_Module_Generator"
+        mc:Ignorable="d" Background="{DynamicResource BGColor}"
+        Title="Encrypted Server Generator" Height="333" Width="800">
+	<Grid Margin="10">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="10"/>
+			<ColumnDefinition Width="160"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="10"/>
+			<RowDefinition Height="50"/>
+		</Grid.RowDefinitions>
+		<Grid Grid.ColumnSpan="3">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="10"/>
+				<ColumnDefinition/>
+				<ColumnDefinition Width="10"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<local:FieldSet Background="{DynamicResource BGColor}" BorderBrush="{DynamicResource LightRed}" Foreground="White" Header="Step 1: Server dll">
+				<Button Margin="5" Style="{DynamicResource BTStyle}" Foreground="Red" Content="Click to select a file" BorderBrush="{x:Null}" FontSize="16" Click="Button_Click"/>
+			</local:FieldSet>
+			<local:FieldSet Grid.Column="2" Background="{DynamicResource BGColor}" BorderBrush="{DynamicResource LightRed}" Foreground="White" Header="Step 2: Additional Files" >
+				<Grid Margin="5">
+					<ListBox Background="#3F000000"  x:Name="lbAdditional" Margin="0,0,0,24" BorderBrush="Black"/>
+					<Button Style="{DynamicResource BTStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="0,-7,-0.3,0" FontSize="22"  Height="25" Width="25" Content="+" Foreground="Red" BorderBrush="Black" Click="Button_Click_1"/>
+				</Grid>
+			</local:FieldSet>
+			<local:FieldSet Grid.Column="4" Background="{DynamicResource BGColor}" BorderBrush="{DynamicResource LightRed}" Foreground="White" Header="Step 3: Setup">
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
+					<StackPanel>
+						<local:FieldSet Margin="2.5,5" Background="{DynamicResource BGColor}" BorderBrush="{DynamicResource LightRed}" Foreground="White" Header="Encryption Algorithm">
+							<StackPanel Margin="5,5">
+								<ComboBox SelectionChanged="ComboBox_SelectionChanged" Style="{DynamicResource CBStyle}">
+									<ComboBoxItem Content="AES (default)"/>
+									<ComboBoxItem Content="custom"/>
+								</ComboBox>
+								<Button x:Name="btEnc" Style="{DynamicResource BTStyle}" Visibility="Collapsed" Margin="0,5" Content="Select Encryption Algorithm" Click="Button_Click_2"/>
+							</StackPanel>
+						</local:FieldSet>
+						<local:FieldSet Margin="2.5,5" Background="{DynamicResource BGColor}" BorderBrush="{DynamicResource LightRed}" Foreground="White" Header="Password">
+							<StackPanel Margin="2.5,5">
+								<PasswordBox Height="20" Margin="2" x:Name="pwA" PasswordChanged="PasswordChanged"/>
+								<PasswordBox Height="20" Margin="2" x:Name="pwB" PasswordChanged="PasswordChanged"/>
+							</StackPanel>
+						</local:FieldSet>
+					</StackPanel>
+				</ScrollViewer>
+			</local:FieldSet>
+		</Grid>
+		<ProgressBar Grid.Row="2" BorderBrush="Black" Foreground="{DynamicResource LightRed}" Background="#7F000000" x:Name="pb" Maximum="4"/>
+		<Button Content="Build" Style="{DynamicResource BTStyle}" Click="Button_Click_3" Grid.Row="2" Grid.Column="2"/>
+	</Grid>
+</Window>
