@@ -6,6 +6,9 @@ namespace DVSModularServer {
 		public bool UseHttps { get; set; }
 		public ushort Port { get; set; }
 		public string Logfile { get; set; }
+		/// <summary>
+		/// Domain name that all urls should point to
+		/// </summary>
 		public string ReportBackDomain { get; set; }
 		/// <summary>
 		/// Downloads a list of all top level domains and validates whether the current one is included.
