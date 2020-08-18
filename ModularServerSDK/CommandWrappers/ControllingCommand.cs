@@ -34,7 +34,7 @@ namespace System {
 		public ControllingCommand(string name, ctrlcommandAction onExecute, ctrlcommandAction onHelp, ref T objectToControl) {
 			if(string.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("Commands need a name. How do you expect them to be called otherwise?", nameof(name));
-			Verb = name;
+			Verb = name.ToUpperInvariant();
 			if(objectToControl is object o && o == null)
 				throw new ArgumentNullException(nameof(objectToControl));
 			obj = objectToControl;

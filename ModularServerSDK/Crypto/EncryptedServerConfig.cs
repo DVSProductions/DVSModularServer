@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml.Serialization;
 namespace System {
 	/// <summary>
-	/// Configuration file for encrypted server modules.
+	/// Configuration file for encrypted server modules. rawr
 	/// This config file is included in the compressed result archive as metadata
 	/// </summary>
 	public class EncryptedServerConfig {
@@ -44,7 +44,7 @@ namespace System {
 				C.WriteLineS("wrote config file succesfully");
 			}
 			catch(Exception ex) {
-				C.WriteLineE($"ERROR WRITING CONFIG FILE: {ex.ToString()}");
+				C.WriteLineE($"ERROR WRITING CONFIG FILE: {ex}");
 			}
 		}
 		/// <summary>

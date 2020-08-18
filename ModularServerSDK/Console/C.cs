@@ -5,13 +5,18 @@
 	/// Please refrain from using any direct access to the default <see cref="Console"/> <see langword="class"/> , as this 
 	/// will break a lot of stuff, and we wouldn't want that, would we?
 	/// </para>
+	/// <list type="bullet">
+	/// <listheader>
 	/// Features:
-	/// <para>
+	/// </listheader>
+	/// <item>
 	/// <see cref="C"/> will keep track of time, and thread that sent messages for easier display. 
+	/// </item>
+	/// <item>
 	/// It even shows when the day has changed to minimize console output while not leaving out anything.
-	/// <see cref="C"/> will write everything (without colors) into a logfile using <see cref="L"/>
-	/// 
-	/// </para>
+	/// </item><item>
+	/// <see cref="C"/> will write everything (without colors) into a logfile using <see cref="L"/></item>
+	/// </list>
 	/// </summary>
 	public static class C {
 		/// <summary>
@@ -130,7 +135,7 @@
 				var str = Input?.GetTypedText();
 				if(str != null) Console.Write('\r');
 				DatePrinter.PrintIfChanged();
-				PrintLine($"[{DateTime.Now.ToLongTimeString()}] {CTN}: {(value ?? "NULL").ToString()}");
+				PrintLine($"[{DateTime.Now.ToLongTimeString()}] {CTN}: {value ?? "NULL"}");
 				if(str != null) {
 					Console.Write(str);
 					Console.CursorLeft = Input.CursorX;
@@ -149,7 +154,7 @@
 				DatePrinter.PrintIfChanged();
 				Print($"[{DateTime.Now.ToLongTimeString()}] {CTN}: ");
 				using(var _ = new ColorHandler(background, foreground))
-					PrintLine($"{(value??"NULL").ToString()} ");
+					PrintLine($"{value??"NULL"} ");
 				if(str != null) {
 					Console.Write(str);
 					Console.CursorLeft = Input.CursorX;

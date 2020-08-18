@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
+
 namespace System {
 	/// <summary>
 	/// A premade command class so you don't have to make them yourself
@@ -29,7 +31,7 @@ namespace System {
 				throw new ArgumentException("Helpmsg Cannot be empty. Tell your user about yourself!", nameof(helpmsg));
 			if (string.IsNullOrWhiteSpace(verb))
 				throw new ArgumentNullException(nameof(verb), "Commands need a name. How do you expect them to be called otherwise?");
-			Verb = verb.ToLower();
+			Verb = verb.ToUpperInvariant();
 			a = comm ?? throw new ArgumentNullException(nameof(comm), "You need to provide a command");
 			msg = helpmsg;
 		}

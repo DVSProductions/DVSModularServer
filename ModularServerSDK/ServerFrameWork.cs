@@ -14,11 +14,11 @@ namespace System {
 		/// Used in the default error page displays
 		/// </summary>
 		/// <param name="errorcode">Current error code</param>
-		/// <param name="additionalInfo">Any string information related to the error. Propably an error message</param>
+		/// <param name="additionalInfo">Any string information related to the error. Probably an error message</param>
 		public delegate string errorPage(HttpStatusCode errorcode, string additionalInfo);
 		/// <summary>
-		/// Delegate defining what a Method should look like, that generates respones from requests.
-		/// retuns the response body
+		/// Delegate defining what a Method should look like, that generates responses from requests.
+		/// returns the response body
 		/// </summary>
 		/// <param name="request">incoming request</param>
 		/// <param name="response">outgoing response</param>
@@ -29,7 +29,7 @@ namespace System {
 		/// </summary>
 		/// <param name="name">Name for the created <see cref="Thread"/></param>
 		/// <param name="action">code for the thread</param>
-		public static void QUWI(string name, Action action) => ThreadPool.QueueUserWorkItem((b) => { Thread.CurrentThread.Name = name; action(); });
+		public static void QUWI(string name, Action action) => ThreadPool.QueueUserWorkItem((_) => { Thread.CurrentThread.Name = name; action(); });
 		/// <summary>
 		/// QueueUserWorkItem shorthand with automatic thread naming for actions
 		/// </summary>
@@ -83,7 +83,7 @@ namespace System {
 		/// <param name="o">object you want to serialize</param>
 		/// <param name="maxdepth">
 		/// How many layers shall be unwrapped. 
-		/// Set this if you either only need a brief overwiew over a object, or if the loop detection fails and you need to stop it
+		/// Set this if you either only need a brief overview over a object, or if the loop detection fails and you need to stop it
 		/// </param>
 		public static string RecursiveToString(object o, int maxdepth = Int32.MaxValue) {
 			var butler = new HashSet<object>();

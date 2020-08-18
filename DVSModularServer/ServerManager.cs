@@ -135,7 +135,7 @@ namespace DVSModularServer {
 				Servers.Add(store.BasePath, store);
 				ServerNames.Add(store.serv, store.BasePath);
 				var i = C.Input as Interactive;
-				var serverVerbName = store.BasePath.Trim().ToLower().Replace(" ", "_");
+				var serverVerbName = store.BasePath.Trim().ToLowerInvariant().Replace(" ", "_");
 				foreach (var comm in store.serv.AvaliableCommands) {
 					if (string.IsNullOrWhiteSpace(comm.Verb)) {
 						C.WriteLineE($"Command name Violation! \"{comm.Verb ?? "null"}\" is not a valid name!");
@@ -145,17 +145,17 @@ namespace DVSModularServer {
 						C.WriteLineI($"Commands should not contain spaces: \"{comm.Verb}\"");
 					if (comm.Verb.Contains("\t"))
 						C.WriteLineI($"Commands should not contain tabs: \"{comm.Verb}\"");
-					i.AddCommand($"{serverVerbName}.{comm.Verb.Trim().ToLower().Replace(" ", "_").Replace("\t", "_")}", comm);
+					i.AddCommand($"{serverVerbName}.{comm.Verb.Trim().ToLowerInvariant().Replace(" ", "_").Replace("\t", "_")}", comm);
 				}
 				C.WriteLineS($"\tLoaded {store.Name}.");
 				return true;
 			}
 			catch (MissingFieldException ex) {
 				try {
-					C.WriteLineE($"\tLoading {s.Metadata.Name} failed!: {ex.ToString()}");
+					C.WriteLineE($"\tLoading {s.Metadata.Name} failed!: {ex}");
 				}
 				catch {
-					C.WriteLineE($"\tLoading name of server failed. Add metadata! {ex.ToString()}");
+					C.WriteLineE($"\tLoading name of server failed. Add metadata! {ex}");
 				}
 				return false;
 			}
@@ -169,7 +169,9 @@ namespace DVSModularServer {
 			foreach (var module in Directory.EnumerateFiles("Servers/", "*.edll")) {
 				try {
 					using (var fs = new FileStream(module, FileMode.Open)) {
+#pragma warning disable CA2000 //Intentionally leaving the archive open so the garbage collector doesn't kill the module
 						using (var a = new System.IO.Compression.ZipArchive(fs, System.IO.Compression.ZipArchiveMode.Read)) {
+#pragma warning restore CA2000 
 							var files = a.Entries;
 							EncryptedServerConfig esc = null;
 							foreach (var file in files) {

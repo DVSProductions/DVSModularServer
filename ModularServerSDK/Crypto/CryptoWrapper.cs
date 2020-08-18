@@ -48,7 +48,7 @@ namespace System.Security {
 		/// Executes the keyMutation using a regular string. 
 		/// Obviously returns a <see cref="SecureString"/>, because all crypto methods use <see cref="SecureString"/>s.
 		/// <para>
-		/// Please validate the usecase of this method before using it!
+		/// Please validate the use-case of this method before using it!
 		/// Do you really need the key as a unsafe string?
 		/// Are you leaking information by potentially exposing keys?
 		/// </para>

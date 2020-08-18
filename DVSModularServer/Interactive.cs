@@ -47,7 +47,7 @@ namespace DVSModularServer {
 		/// <param name="command">Command to be stored</param>
 		public void AddCommand(string name, ICommand command) {
 			command.AssignedName = string.IsNullOrWhiteSpace(name) ? throw new ArgumentException("A command needs a name!", nameof(name)) : name.ToLower();
-			Commands.Add(name.ToLower(), command);
+			Commands.Add(name.ToUpperInvariant(), command);
 		}
 		/// <summary>
 		/// A simple tool to make a inject a <see cref="SimpleCommand"/> into the command list
@@ -63,7 +63,7 @@ namespace DVSModularServer {
 			commandHistory = new List<string>();
 			Commands = new SortedDictionary<string, ICommand>();
 			CreateSimpleCommand("echo", Echo, "Prints a string");
-			CreateSimpleCommand("uptime", (l) => C.WriteLine($"Uptime: {watch.Elapsed.ToString()}"), "Outputs the current uptime");
+			CreateSimpleCommand("uptime", (l) => C.WriteLine($"Uptime: {watch.Elapsed}"), "Outputs the current uptime");
 			CreateSimpleCommand("exit", (l) => { Program.cleanexit = true; Thread.CurrentThread.Abort(); }, "Stops the server softly");
 			CreateSimpleCommand("ping", (l) => C.WriteLine("Pong!"), "You know what it does");
 			AddCommand("help", new Help(this));
@@ -421,7 +421,7 @@ namespace DVSModularServer {
 			var o = SplitCommand(typedText);
 			if(o.Item1 == null)
 				Beep();
-			else if(!Commands.TryGetValue(o.Item1.ToLower(), out var comm))
+			else if(!Commands.TryGetValue(o.Item1.ToUpperInvariant(), out var comm))
 				C.WriteLineE($"Command \"{o.Item1}\" not found. Type \"help\" for a list of all commands");
 			else {
 				try {
@@ -438,7 +438,7 @@ namespace DVSModularServer {
 				}
 				catch(Exception ex) {
 					if(!(ex is ThreadAbortException))
-						C.WriteLineE($"{o.Item1} encountered a fatal error: {ex.ToString()}");
+						C.WriteLineE($"{o.Item1} encountered a fatal error: {ex}");
 				}
 			}
 		}
@@ -476,9 +476,9 @@ namespace DVSModularServer {
 		/// Ensures that mistakes during development get caught ASAP
 		/// </para> 
 		/// </summary>
-		private void PreparePrompt<T>(string msg, T[] options) {
+		private void PreparePrompt<T>(string msg, IList<T> options) {
 			PreparePrompt(msg);
-			if (options == null || options.Length < 2)
+			if (options == null || options.Count < 2)
 				throw new ArgumentNullException(nameof(options));
 			while (queryModeActive) System.Threading.Tasks.Task.Delay(500).Wait();
 		}
@@ -497,9 +497,9 @@ namespace DVSModularServer {
 		/// Generates the prompt by combining the message and a list of all options.
 		/// The list gets generated using the .ToString() method, so ensure that this is overloaded if a custom type is used
 		/// </summary>
-		static string GenPromptStr<T>(string msg, T[] options) {
+		static string GenPromptStr<T>(string msg, IList<T> options) {
 			var p = msg + " (";
-			for(var n = 0; n < options.Length; n++)
+			for(var n = 0; n < options.Count; n++)
 				p += (n != 0 ? "/" : "") + options[n].ToString();
 			return p + ")" + prefix;
 		}
@@ -517,7 +517,7 @@ namespace DVSModularServer {
 		/// <param name="msg">your question</param>
 		/// <param name="options">possible answers. at least 2!</param>
 		/// <returns>returns the index in <paramref name="options"/> which has been chosen by the user</returns>
-		public int Prompt(string msg, char[] options) {
+		public int Prompt(string msg, IList<char> options) {
 			PreparePrompt(msg, options);
 			int? promptReturn = null;
 			onQueryModeKeyPress = (k) => {
@@ -525,9 +525,9 @@ namespace DVSModularServer {
 					Beep();
 					return;
 				}
-				var c = k.KeyChar.ToString().ToLower()[0];
-				for(var n = 0; n < options.Length; n++) {
-					if(options[n] == c) {
+				var c = k.KeyChar.ToString().ToUpperInvariant()[0];
+				for(var n = 0; n < options.Count; n++) {
+					if(options[n].ToString().ToUpperInvariant()[0] == c) {
 						promptReturn = n;
 						Console.WriteLine(c);
 						queryModeActive = false;
@@ -548,15 +548,15 @@ namespace DVSModularServer {
 		/// <param name="msg">your question</param>
 		/// <param name="options">possible answers. at least 2!</param>
 		/// <returns>returns the index in <paramref name="options"/> which has been chosen by the user</returns>
-		public int Prompt(string msg, string[] options) {
+		public int Prompt(string msg, IList<string> options) {
 			PreparePrompt(msg, options);
 			int? promptReturn = null;
 			var prompt = GenPromptStr(msg, options);
 			TextModeWrapper(
 				prompt,
 				(typedPrompt) => {
-					for(var n = 0; n < options.Length; n++) {
-						if(options[n] == typedPrompt) {
+					for(var n = 0; n < options.Count; n++) {
+						if(options[n].ToUpperInvariant() == typedPrompt.ToUpperInvariant()) {
 							typedPrompt = "";
 							promptReturn = n;
 							Console.WriteLine();

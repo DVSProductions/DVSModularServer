@@ -44,7 +44,7 @@
 		/// <param name="htmlTag">Html tag. as an example </param>
 		/// <param name="parameters">Stuff thats inside the start tag</param>
 		/// <param name="content">text between the start and end tag</param>
-		public static string Tag(string htmlTag, string parameters, string content) => $"<{htmlTag}{parameters}>{Escape(content)}</{htmlTag}>";
+		public static string Tag(string htmlTag, string parameters, string content) => $"<{htmlTag} {parameters}>{Escape(content)}</{htmlTag}>";
 #pragma warning disable IDE1006 // Tags are allowed to violate naming schemes
 		/// <summary>
 		/// A shorthand for creating links

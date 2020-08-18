@@ -14,12 +14,12 @@ namespace DVSModularServer {
 					C.WriteLine("Known commands: ");
 					var s = new StringBuilder();
 					foreach(var k in parent.Commands.Keys)
-						s.Append($"{k}, ");
+						s.Append($"{k.ToLowerInvariant()}, ");
 					s.Remove(s.Length - 2, 2);
 					C.WriteLine(s.ToString());
 				}
 				else {
-					if(!parent.Commands.TryGetValue(parameters[0], out var tcom)) {
+					if(!parent.Commands.TryGetValue(parameters[0].ToUpperInvariant(), out var tcom)) {
 						C.WriteLineI($"Command \"{parameters[0]}\" not found.");
 						Execute(null);
 					}

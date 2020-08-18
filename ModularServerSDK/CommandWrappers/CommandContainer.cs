@@ -21,7 +21,7 @@ namespace System {
 		public CommandContainer(string name, Action<List<string>> onRun, Action<List<string>> onHelp) {
 			if(string.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("A command needs a name", nameof(name));
-			Verb = name;
+			Verb = name.ToUpperInvariant();
 			ex = onRun ?? throw new ArgumentNullException(nameof(onRun));
 			he = onHelp ?? throw new ArgumentNullException(nameof(onHelp));
 		}

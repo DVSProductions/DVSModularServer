@@ -10,7 +10,7 @@ namespace System {
 		/// </summary>
 		string AssignedName { get; set; }
 		/// <summary>
-		/// Name of your command used to call it
+		/// Name of your command used to call it. Must be UpperInvariant
 		/// </summary>
 		string Verb { get; }
 		/// <summary>

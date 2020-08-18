@@ -37,7 +37,7 @@ namespace ModularServerSDK {
 				C.WriteLineS("wrote config file successfully");
 			}
 			catch (Exception ex) {
-				C.WriteLineE($"ERROR WRITING CONFIG FILE: {ex.ToString()}");
+				C.WriteLineE($"ERROR WRITING CONFIG FILE: {ex}");
 			}
 		}
 		/// <summary>
@@ -70,7 +70,7 @@ namespace ModularServerSDK {
 				Save(settings, path);
 			}
 			catch (Exception ex) {
-				C.WriteLineE($"Invalid config: {ex.ToString()}");
+				C.WriteLineE($"Invalid config: {ex}");
 				C.WriteLine("Using default config");
 				settings = alternative;
 			}

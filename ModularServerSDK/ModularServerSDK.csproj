@@ -46,27 +46,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="C.cs" />
+    <Compile Include="Console\C.cs" />
     <Compile Include="CallOnceAction.cs" />
-    <Compile Include="ColorHandler.cs" />
-    <Compile Include="CommandContainer.cs" />
+    <Compile Include="Console\ColorHandler.cs" />
+    <Compile Include="CommandWrappers\CommandContainer.cs" />
     <Compile Include="ConfigLoader.cs" />
-    <Compile Include="ControllingCommand.cs" />
-    <Compile Include="CryptoTools.cs" />
-    <Compile Include="CryptoWrapper.cs" />
-    <Compile Include="EncryptedServerConfig.cs" />
+    <Compile Include="CommandWrappers\ControllingCommand.cs" />
+    <Compile Include="Crypto\CryptoTools.cs" />
+    <Compile Include="Crypto\CryptoWrapper.cs" />
+    <Compile Include="Crypto\EncryptedServerConfig.cs" />
     <Compile Include="Html.cs" />
-    <Compile Include="ICommand.cs" />
-    <Compile Include="IConfig.cs" />
-    <Compile Include="IInteractive.cs" />
-    <Compile Include="IServer.cs" />
-    <Compile Include="IServerCrypto.cs" />
-    <Compile Include="IServerMeta.cs" />
+    <Compile Include="Interfaces\ICommand.cs" />
+    <Compile Include="Interfaces\IConfig.cs" />
+    <Compile Include="Interfaces\IInteractive.cs" />
+    <Compile Include="Interfaces\IServer.cs" />
+    <Compile Include="Interfaces\IServerCrypto.cs" />
+    <Compile Include="Interfaces\IServerMeta.cs" />
     <Compile Include="L.cs" />
-    <Compile Include="ServerCryptoAES.cs" />
+    <Compile Include="Crypto\ServerCryptoAES.cs" />
     <Compile Include="ServerFrameWork.cs" />
     <Compile Include="ServerInfo.cs" />
-    <Compile Include="SimpleCommand.cs" />
+    <Compile Include="CommandWrappers\SimpleCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

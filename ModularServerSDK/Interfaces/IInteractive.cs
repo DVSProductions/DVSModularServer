@@ -1,4 +1,6 @@
-﻿namespace System {
+﻿using System.Collections.Generic;
+
+namespace System {
 	/// <summary>
 	/// All public Functions that the interactive shell exposes for general use.
 	/// Used in the <see cref="C"/> for you to interact with the user.
@@ -42,7 +44,7 @@
 		/// <param name="msg">your question</param>
 		/// <param name="options">possible answers. at least 2!</param>
 		/// <returns>returns the index in <paramref name="options"/> which has been chosen by the user</returns>
-		int Prompt(string message, char[] options);
+		int Prompt(string message, IList<char> options);
 		/// <summary>
 		/// Asks the user a question, This interrupts anything else.
 		/// Pass your answer options as text options the user has to type 1:1. 
@@ -51,6 +53,6 @@
 		/// <param name="msg">your question</param>
 		/// <param name="options">possible answers. at least 2!</param>
 		/// <returns>returns the index in <paramref name="options"/> which has been chosen by the user</returns>
-		int Prompt(string message, string[] options);
+		int Prompt(string message, IList<string> options);
 	}
 }
