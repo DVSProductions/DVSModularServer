@@ -1,4 +1,6 @@
-﻿namespace System {
+﻿using ModularServerSDK.Tools;
+
+namespace System {
 	/// <summary>
 	/// This is your colorful and amazing console interface. Use it!
 	/// <para>

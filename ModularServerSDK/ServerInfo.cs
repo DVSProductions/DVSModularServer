@@ -1,4 +1,6 @@
-﻿namespace System {
+﻿using ModularServerSDK.Tools;
+
+namespace System {
 	/// <summary>
 	/// This is a universal hub for anyone to get information about the server software.
 	/// </summary>

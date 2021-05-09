@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ModularServerSDK.Tools;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -23,7 +24,7 @@ namespace System {
 	/// </summary>
 	public static class L {
 		/// <summary>
-		/// The logfile that is currently beeing logged to
+		/// The logfile that is currently being logged to
 		/// </summary>
 		public static SetOnceObject<string> Logfile { get; } = new SetOnceObject<string>();
 		/// <summary>

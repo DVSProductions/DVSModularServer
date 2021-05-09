@@ -47,7 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Console\C.cs" />
-    <Compile Include="CallOnceAction.cs" />
+    <Compile Include="HtmlFileHandler.cs" />
+    <Compile Include="Tools\AtomicBuffer.cs" />
+    <Compile Include="Tools\CallOnceAction.cs" />
     <Compile Include="Console\ColorHandler.cs" />
     <Compile Include="CommandWrappers\CommandContainer.cs" />
     <Compile Include="ConfigLoader.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="ServerFrameWork.cs" />
     <Compile Include="ServerInfo.cs" />
     <Compile Include="CommandWrappers\SimpleCommand.cs" />
+    <Compile Include="Tools\SwitchableManagement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

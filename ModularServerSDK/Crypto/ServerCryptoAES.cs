@@ -31,12 +31,56 @@ namespace System.Security {
 				}
 			}
 		}
+
+
+		/// <summary>
+		/// Default Decryption algorithm using AES
+		/// </summary>
+		/// <param name="data">Data to decrypt</param>
+		/// <param name="mutatedKey">The password</param>
+		[Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
+		public byte[] Decrypt(byte[] data, SecureString mutatedKey, byte[] salt) {
+			if (data == null) return null;
+			using (var encryptor = Aes.Create()) {
+				using (var pdb = CryptoTools.DeriveBytes(mutatedKey, salt)) {
+					encryptor.Key = pdb.GetBytes(32);
+					encryptor.IV = pdb.GetBytes(16);
+				}
+				using (var ms = new MemoryStream()) {
+					using (var cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+						cs.Write(data, 0, data.Length);
+					return ms.ToArray();
+				}
+			}
+		}
 		/// <summary>
 		/// Default Encryption algorithm using AES
 		/// </summary>
 		/// <param name="data">Data to encrypt</param>
 		/// <param name="mutatedKey">The password</param>
 		public byte[] Encrypt(byte[] data, SecureString mutatedKey) {
+			if (data == null) return null;
+			using (var encryptor = Aes.Create()) {
+				using (var pdb = CryptoTools.DeriveBytes(mutatedKey, salt)) {
+					encryptor.Key = pdb.GetBytes(32);
+					encryptor.IV = pdb.GetBytes(16);
+				}
+				using (var ms = new MemoryStream()) {
+					using (var cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+						cs.Write(data, 0, data.Length);
+					return ms.ToArray();
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Default Encryption algorithm using AES
+		/// </summary>
+		/// <param name="data">Data to encrypt</param>
+		/// <param name="mutatedKey">The password</param>
+		[Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
+		public byte[] Encrypt(byte[] data, SecureString mutatedKey, byte[] salt) {
 			if (data == null) return null;
 			using (var encryptor = Aes.Create()) {
 				using (var pdb = CryptoTools.DeriveBytes(mutatedKey, salt)) {

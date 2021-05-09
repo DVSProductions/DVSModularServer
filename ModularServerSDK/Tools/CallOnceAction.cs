@@ -1,6 +1,8 @@
-﻿namespace System {
+﻿using System;
+
+namespace ModularServerSDK.Tools {
 	/// <summary>
-	/// A Class that ensures that the contained <see cref="Action"/> can only be run once. 
+	/// A class that ensures that the contained <see cref="Action"/> can only be run once. 
 	/// Useful for setup Actions that shouldn't run twice.
 	/// don't lock this class! Locking it might result in a deadlock
 	/// </summary>
@@ -252,7 +254,7 @@
 		/// <summary>
 		/// Safe storage for the actual value
 		/// </summary>
-		TStorage store=null;
+		TStorage store = null;
 		/// <summary>
 		/// Create a instance of a <see cref="SetOnceObject{TStorage}"/>
 		/// </summary>
@@ -296,7 +298,7 @@
 		/// <summary>
 		/// Allows implicit conversations to the contained value
 		/// </summary>
-		public static implicit operator TStorage(SetOnceObject<TStorage> targetStore) => (targetStore == null ? default : targetStore.store);
+		public static implicit operator TStorage(SetOnceObject<TStorage> targetStore) => targetStore == null ? default : targetStore.store;
 	}
 	/// <summary>
 	/// Creates a Safe Object that can only be retrieved once set.
@@ -356,6 +358,6 @@
 			var r = new SetOnceStruct<TStorage>();
 			return new Tuple<SetOnceStruct<TStorage>, Action<TStorage>>(r, (o) => r.store = o);
 		}
-		public static implicit operator TStorage(SetOnceStruct<TStorage> targetStore) => (targetStore == null ? default : targetStore.store);
+		public static implicit operator TStorage(SetOnceStruct<TStorage> targetStore) => targetStore == null ? default : targetStore.store;
 	}
 }
