@@ -31,8 +31,7 @@ namespace ModularServerSDK {
 					}
 				}
 				finally {
-					if (fs != null)
-						fs.Dispose();
+					fs?.Dispose();
 				}
 				C.WriteLineS("wrote config file successfully");
 			}
@@ -59,8 +58,7 @@ namespace ModularServerSDK {
 					}
 				}
 				finally {
-					if (fs != null)
-						fs.Dispose();
+					fs?.Dispose();
 				}
 				if (!settings.ValidateSettings()) throw new FormatException("Config validation failed!");
 			}

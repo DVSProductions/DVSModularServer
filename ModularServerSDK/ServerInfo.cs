@@ -13,8 +13,7 @@ namespace System {
 		/// Internal use for initialization
 		/// </summary>
 		public static void SetPort(int p) {
-			if(Port == 0) Port = p;
-			else throw new InvalidOperationException("Hands off");
+			Port = Port == 0 ? p : throw new InvalidOperationException("Hands off");
 		}
 		/// <summary>
 		/// Generates a full url for you since subservers only know their own name this will make a link to your server,

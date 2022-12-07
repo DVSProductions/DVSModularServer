@@ -32,7 +32,6 @@ namespace System.Security {
 			}
 		}
 
-
 		/// <summary>
 		/// Default Decryption algorithm using AES
 		/// </summary>
@@ -72,7 +71,6 @@ namespace System.Security {
 				}
 			}
 		}
-
 
 		/// <summary>
 		/// Default Encryption algorithm using AES

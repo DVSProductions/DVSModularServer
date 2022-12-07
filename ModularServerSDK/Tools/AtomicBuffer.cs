@@ -30,8 +30,8 @@ namespace ModularServerSDK.Tools {
 		/// </summary>
 		/// <param name="DataRegenerator">A function that will create the data we want to buffer</param>
 		public AtomicBuffer(Func<TData> DataCompiler) {
-			Generator = DataCompiler ?? throw new ArgumentNullException(nameof(DataCompiler),"A generator needs to be specified");
-			Buffer= Generator();
+			Generator = DataCompiler ?? throw new ArgumentNullException(nameof(DataCompiler), "A generator needs to be specified");
+			Buffer = Generator();
 		}
 		/// <summary>
 		/// Marks the current data as Invalid. 
@@ -47,11 +47,11 @@ namespace ModularServerSDK.Tools {
 		/// </summary>
 		/// <returns></returns>
 		public TData Get() {
-			if (valid)
+			if(valid)
 				return Buffer;
 			var mycount = counter;
 			var tmp = Generator();
-			if (mycount == counter&&!valid) {
+			if(mycount == counter && !valid) {
 				valid = true;
 				Buffer = tmp;
 			}
@@ -61,6 +61,6 @@ namespace ModularServerSDK.Tools {
 		/// Support for implicit calls to get via conversion to the data type
 		/// </summary>
 		/// <param name="d"></param>
-		public static implicit operator TData(AtomicBuffer<TData> d)=>d.Get();
+		public static implicit operator TData(AtomicBuffer<TData> d) => d.Get();
 	}
 }

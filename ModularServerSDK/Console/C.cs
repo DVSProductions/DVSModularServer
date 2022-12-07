@@ -97,8 +97,7 @@ namespace System {
 		/// </summary>
 		/// <param name="newInteractive">The <see cref="IInteractive"/> to use</param>
 		public static Action SetInput(IInteractive newInteractive) {
-			if(Input == null) Input = newInteractive;
-			else throw new AccessViolationException("Keep your hands of Integral Parts!");
+			Input = Input == null ? newInteractive : throw new AccessViolationException("Keep your hands of Integral Parts!");
 			lockme = newInteractive;
 			return () => Input = null;
 		}

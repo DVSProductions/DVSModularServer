@@ -88,7 +88,7 @@ class ServerDecryptor {
 			return false;
 		}
 		catch (Exception ex) {
-			C.WriteLineE($"Server Decryption error: {ex.ToString()}");
+			C.WriteLineE($"Server Decryption error: {ex}");
 			return false;
 		}
 	}

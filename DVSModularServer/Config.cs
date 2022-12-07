@@ -21,7 +21,7 @@ namespace DVSModularServer {
 				using (var wc = new System.Net.WebClient()) {
 					var lines = wc.DownloadString("http://data.iana.org/TLD/tlds-alpha-by-domain.txt").Split(new[] { Environment.NewLine, "\r\n", "\r", "\n" }, StringSplitOptions.None);
 					var s = ReportBackDomain.Split('.');
-					var tld = s[s.Length - 1].ToUpper();
+					var tld = s[s.Length - 1].ToUpperInvariant();
 					foreach (var l in lines)
 						if (tld == l) return true;
 				}

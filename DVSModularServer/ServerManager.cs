@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
-using System.IO.Ports;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -24,10 +23,11 @@ namespace DVSModularServer {
 		/// Http Server
 		/// </summary>
 		private readonly HttpListener listener;
+
 		/// <summary>
 		/// internal server class for fast access to metadata
 		/// </summary>
-		struct Server {
+		readonly struct Server {
 			/// <summary>
 			/// the actual server
 			/// </summary>
@@ -115,7 +115,7 @@ namespace DVSModularServer {
 					else failed++;
 				}
 				catch (Exception ex) {
-					C.WriteLineE($"Exception in \"{s.Metadata.Name}\": {ex.ToString()}");
+					C.WriteLineE($"Exception in \"{s.Metadata.Name}\": {ex}");
 					failed++;
 				}
 			}
@@ -206,7 +206,7 @@ namespace DVSModularServer {
 					}
 				}
 				catch (Exception ex) {
-					C.WriteLineE($"Error loading encrypted module \"{module}\": {ex.ToString()}");
+					C.WriteLineE($"Error loading encrypted module \"{module}\": {ex}");
 				}
 			}
 			return ret;
