@@ -321,9 +321,11 @@ namespace DVSModularServer {
 				catch (Exception ex) {
 					msg = ShowErrorPage(context.Response, ThisServer.serv.ErrorPage, HttpStatusCode.InternalServerError, ex.Message);
 				}
-				var buf = Encoding.UTF8.GetBytes(msg);
-				context.Response.ContentLength64 = buf.LongLength;
-				context.Response.OutputStream.Write(buf, 0, buf.Length);
+				if(msg != null) {
+					var buf = Encoding.UTF8.GetBytes(msg);
+					context.Response.ContentLength64 = buf.LongLength;
+					context.Response.OutputStream.Write(buf, 0, buf.Length);
+				}
 			}
 			catch {
 				context.Response.StatusCode = 500;
