@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.IO.Ports;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -69,6 +71,12 @@ namespace DVSModularServer {
 			ServerInfo.Domain.Set(Program.Config.ReportBackDomain);
 			protocol = Program.Config.UseHttps ? "https://" : "http://";
 			ServerInfo.CreateURL.Set((they) => $"{protocol}{Program.Config.ReportBackDomain}:{Program.Config.Port}/{Servers[ServerNames[they]].BasePath}/");
+			SystemEvents.SessionEnding += SystemEvents_SessionEnding;
+		}
+		private void SystemEvents_SessionEnding(object sender, SessionEndingEventArgs e) {
+			SystemEvents.SessionEnding -= SystemEvents_SessionEnding;
+			C.WriteLineE($"Shutdown detected!. Reason: {e.Reason}");
+			Stop();
 		}
 		/// <summary>
 		/// Stops all servers and then destroys all resources

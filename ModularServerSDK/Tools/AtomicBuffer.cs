@@ -2,7 +2,7 @@
 namespace ModularServerSDK.Tools {
 	/// <summary>
 	/// This datastructure ensures that clients will always get the most up to date version of data.
-	/// Also it ensures that complicated operations only get executed when needed and not everytime a use requests something.
+	/// Also it ensures that complicated operations only get executed when needed and not everytime a user requests something.
 	/// To accomplish this we have a generator that supplies compiled data to the buffer.
 	/// If outside things change you can let this datastructure know that the data needs to be refreshed asap by calling <see cref="AtomicBuffer{TData}.Invalidate"/>.
 	/// Data refreshing will be handled on a <see cref="AtomicBuffer{TData}.Get"/> call.
