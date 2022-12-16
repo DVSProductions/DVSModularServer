@@ -70,6 +70,7 @@
     <Compile Include="ServerInfo.cs" />
     <Compile Include="CommandWrappers\SimpleCommand.cs" />
     <Compile Include="Tools\SwitchableManagement.cs" />
+    <Compile Include="Tools\TablePrinter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
