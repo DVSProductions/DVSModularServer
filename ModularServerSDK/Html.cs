@@ -83,6 +83,6 @@
 		/// and a body in which your content goes
 		/// </summary>
 		/// <param name="content">Body content</param>
-		public static string BodyBuilder(string content) => Tag("HTML", $"{$"{ServerFrameWork.MOTHERFUCKINGCSS}"}{Tag("BODY", content)}");
+		public static string BodyBuilder(string content) => "<!DOCTYPE html>" + Tag("HTML", $"{$"{ServerFrameWork.MOTHERFUCKINGCSS}"}{Tag("BODY", content)}");
 	}
 }
