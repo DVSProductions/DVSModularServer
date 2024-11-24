@@ -13,7 +13,7 @@ namespace System.Security {
 		public static Rfc2898DeriveBytes DeriveBytes(SecureString str, byte[] salt) {
 			var bstr = Marshal.SecureStringToBSTR(str);
 			try {
-				return new Rfc2898DeriveBytes(Marshal.PtrToStringBSTR(bstr), salt);
+				return new Rfc2898DeriveBytes(Marshal.PtrToStringBSTR(bstr), salt,1234567);
 			}
 			finally {
 				Marshal.FreeBSTR(bstr);

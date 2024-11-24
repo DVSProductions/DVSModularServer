@@ -2,7 +2,7 @@
 using System;
 namespace DVSModularServer {
 	public class Config : IConfig {
-		public const string ConfigFile = "ServerConfig.xml";
+		public const string ConfigFile = "Config\\ServerConfig.xml";
 		public bool UseHttps { get; set; }
 		public ushort Port { get; set; }
 		public string Logfile { get; set; }
@@ -16,15 +16,16 @@ namespace DVSModularServer {
 		/// A: There is no internet. (this function will fail)
 		/// B: A random or misspelled TLD has been used, making it impossible for this server to be reached
 		/// </summary>
-		private bool TLDValidity() {
+		private async Task<bool> TLDValidity() {
 			try {
-				using (var wc = new System.Net.WebClient()) {
-					var lines = wc.DownloadString("http://data.iana.org/TLD/tlds-alpha-by-domain.txt").Split(new[] { Environment.NewLine, "\r\n", "\r", "\n" }, StringSplitOptions.None);
-					var s = ReportBackDomain.Split('.');
-					var tld = s[s.Length - 1].ToUpperInvariant();
-					foreach (var l in lines)
-						if (tld == l) return true;
-				}
+				using var httpClient = new HttpClient();
+				var response = await httpClient.GetStringAsync("http://data.iana.org/TLD/tlds-alpha-by-domain.txt");
+				var lines = response.Split([Environment.NewLine, "\r\n", "\r", "\n"], StringSplitOptions.None);
+				var s = ReportBackDomain.Split('.');
+				var tld = s[s.Length - 1].ToUpperInvariant();
+				foreach(var l in lines)
+					if(tld == l)
+						return true;
 			}
 			catch { }
 			return false;
@@ -33,7 +34,8 @@ namespace DVSModularServer {
 		/// Prints a error message in case the TLD check fails and asks whether the check results should be ignored
 		/// </summary>
 		private bool AskForValidity() {
-			if (TLDValidity()) return true;
+			if(TLDValidity().Result)
+				return true;
 			C.WriteLineE($"ERROR: Top level domain not found! ({ReportBackDomain})");
 			C.WriteLine("This means that your Server might not be reachable!");
 			return C.Input.PromptYN("Do you wish to continue?");
@@ -62,7 +64,7 @@ namespace DVSModularServer {
 			Port = 50001;
 			Logfile = "ServerLogs.log";
 			ReportBackDomain = "dvsproductions.de";
-			UseHttps = true;
+			UseHttps = false;
 		}
 	}
 }

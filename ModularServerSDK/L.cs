@@ -68,8 +68,9 @@ namespace System {
 		/// <param name="logfileName">Logfile</param>
 		public static Action Init(string logfileName) {
 			Logfile.Set(logfileName);
-			var t = ServerFrameWork.ST("LogMan", LoggingThread);
-			return () => { t.Abort(); t.Join(); };
+			var source = new CancellationTokenSource();
+			var t = ServerFrameWork.ST("LogMan",()=> LoggingThread(source.Token));
+			return () => { source.Cancel(); t.Join(); };
 		}
 		/// <summary>
 		/// LogMan to the rescue!
@@ -79,10 +80,10 @@ namespace System {
 		/// all remaining data in the <see cref="Queue{T}"/> to disk before quitting. 
 		/// (independent of timeouts)
 		/// </summary>
-		private static void LoggingThread() {
+		private static void LoggingThread(CancellationToken ct) {
 			try {
 				C.WriteLine("Logging to " + Logfile);
-				while(true) {
+				while(!ct.IsCancellationRequested) {
 					try {
 						while(toWrite.Count == 0)
 							Thread.Sleep(500);

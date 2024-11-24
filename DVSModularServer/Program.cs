@@ -110,10 +110,12 @@ namespace DVSModularServer {
 			CreateServerFolder();
 			DestroySDK();
 			RunServerManager();
-			if(!stop) 
-				interactive.Join();
-			else 
-				interactive.Abort();
+			if(!stop)
+				interactive.thread.Join();
+			else {
+				interactive.cancelToken.Cancel();
+				//interactive.Abort();
+			}
 			if(!cleanexit) {
 				C.FillLineC('-', null, ConsoleColor.DarkGray);
 				C.WriteLineE("Crashed");
@@ -128,13 +130,14 @@ namespace DVSModularServer {
 		/// <summary>
 		/// Launches the Interactive Shell Thread and returns it
 		/// </summary>
-		private static Thread RunInteractiveShell() {
-			var t = new Thread(new Interactive().InteractiveThread) {
+		private static (Thread thread,CancellationTokenSource cancelToken) RunInteractiveShell() {
+			var source = new CancellationTokenSource();
+			var t = new Thread(new Interactive().InteractiveThreadWrapper) {
 				Priority = ThreadPriority.BelowNormal,
 				Name = "I"
 			};
-			t.Start();
-			return t;
+			t.Start(source.Token);
+			return (t,source);
 		}
 		/// <summary>
 		/// Launches the server manager and waits for it to shut down

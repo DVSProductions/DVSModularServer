@@ -37,4 +37,12 @@ namespace System{
 		/// </summary>
 		List<ICommand> AvaliableCommands { get; }
 	}
+	public interface IServer2 : IServer {
+		/// <summary>
+		/// Dictionary of "folders" and the respo methods associated with them
+		/// These Folders respond to everything that is deeper than the folder too
+		/// </summary>
+		Dictionary<string, ServerFrameWork.respoMethod> GenerateDepthResponders();
+
+	}
 }

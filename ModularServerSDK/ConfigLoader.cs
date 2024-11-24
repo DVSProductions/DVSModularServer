@@ -16,16 +16,19 @@ namespace ModularServerSDK {
 		/// <param name="what">IConfig Class instance</param>
 		/// <param name="path">Full path to the config file</param>
 		public static void Save<T>(T what, string path) where T : IConfig {
-			if (!what.ValidateSettings()) {
+			if(!what.ValidateSettings()) {
 				what.FixSettings();
-				if (!what.ValidateSettings())
+				if(!what.ValidateSettings())
 					throw new InvalidDataException("ConfigLoader.Save: Fixed Settings are still invalid!");
 			}
 			try {
+				var directory = Path.GetDirectoryName(Path.GetFullPath(path));
+				if(!Directory.Exists(directory))
+					Directory.CreateDirectory(directory);
 				Stream fs = null;
 				try {
 					fs = new FileStream(path, FileMode.Create);
-					using (var writer = new StreamWriter(fs, new UTF8Encoding())) {
+					using(var writer = new StreamWriter(fs, new UTF8Encoding())) {
 						fs = null;
 						new XmlSerializer(typeof(T)).Serialize(writer, what);
 					}
@@ -35,7 +38,7 @@ namespace ModularServerSDK {
 				}
 				C.WriteLineS("wrote config file successfully");
 			}
-			catch (Exception ex) {
+			catch(Exception ex) {
 				C.WriteLineE($"ERROR WRITING CONFIG FILE: {ex}");
 			}
 		}
@@ -52,7 +55,7 @@ namespace ModularServerSDK {
 				Stream fs = null;
 				try {
 					fs = new FileStream(path, FileMode.Open);
-					using (var reader = new StreamReader(fs)) {
+					using(var reader = new StreamReader(fs)) {
 						fs = null;
 						settings = (T)new XmlSerializer(typeof(T)).Deserialize(reader);
 					}
@@ -60,14 +63,20 @@ namespace ModularServerSDK {
 				finally {
 					fs?.Dispose();
 				}
-				if (!settings.ValidateSettings()) throw new FormatException("Config validation failed!");
+				if(!settings.ValidateSettings())
+					throw new FormatException("Config validation failed!");
 			}
-			catch (FileNotFoundException) {
+			catch(DirectoryNotFoundException) {
+				C.WriteLine("Creating config folder and new config");
+				settings = alternative;
+				Save(settings, path);
+			}
+			catch(FileNotFoundException) {
 				C.WriteLine("Creating default config");
 				settings = alternative;
 				Save(settings, path);
 			}
-			catch (Exception ex) {
+			catch(Exception ex) {
 				C.WriteLineE($"Invalid config: {ex}");
 				C.WriteLine("Using default config");
 				settings = alternative;

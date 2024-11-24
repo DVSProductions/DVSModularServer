@@ -1,4 +1,5 @@
 ﻿using ModularServerSDK.Tools;
+using System.Diagnostics;
 
 namespace System {
 	/// <summary>
@@ -53,11 +54,15 @@ namespace System {
 			(msg) => {
 				width = 0;
 				using(var _ = new ColorHandler(ConsoleColor.Black, ConsoleColor.DarkGray)) {
+					int lastLeft = -1;
 					do {
 						width++;
+						lastLeft = Console.CursorLeft;
 						Console.Write("-");
-					} while(Console.CursorLeft != 0);
-					Console.CursorTop--;
+						//Debug.WriteLine(Console.CursorLeft);
+					} while(Console.CursorLeft != 0 && lastLeft != Console.CursorLeft);//changes in the framework have made this necessary
+					if(lastLeft != Console.CursorLeft) 
+						Console.CursorTop--;
 					Console.CursorLeft = (width / 2) - (msg.Length / 2);
 					Console.WriteLine(msg);
 				}
@@ -69,7 +74,8 @@ namespace System {
 		/// <param name="character">the character to fill the line with</param>
 		public static void FillLine(char character) {
 			var s = new Text.StringBuilder("\r", width + 2);
-			for(var n = 0; n < width; n++) s.Append(character);
+			for(var n = 0; n < width; n++)
+				s.Append(character);
 			s.Append("\b\n");
 			Console.Write(s);
 		}
@@ -134,7 +140,8 @@ namespace System {
 		public static void WriteLine(object value) {
 			lock(lockme) {
 				var str = Input?.GetTypedText();
-				if(str != null) Console.Write('\r');
+				if(str != null)
+					Console.Write('\r');
 				DatePrinter.PrintIfChanged();
 				PrintLine($"[{DateTime.Now.ToLongTimeString()}] {CTN}: {value ?? "NULL"}");
 				if(str != null) {
@@ -151,11 +158,12 @@ namespace System {
 		public static void WriteLineC(object value, ConsoleColor? foreground, ConsoleColor? background = null) {
 			lock(lockme) {
 				var str = Input?.GetTypedText();
-				if(str != null) Console.Write('\r');
+				if(str != null)
+					Console.Write('\r');
 				DatePrinter.PrintIfChanged();
 				Print($"[{DateTime.Now.ToLongTimeString()}] {CTN}: ");
 				using(var _ = new ColorHandler(background, foreground))
-					PrintLine($"{value??"NULL"} ");
+					PrintLine($"{value ?? "NULL"} ");
 				if(str != null) {
 					Console.Write(str);
 					Console.CursorLeft = Input.CursorX;

@@ -6,12 +6,6 @@ namespace System.Net {
 	[ExportMetadata("Name", "DemoServer")]
 	[ExportMetadata("BasePath", "Demo")]
 	public class Omed : IServer {
-		//public static string GetString(System.Security.SecureString str) {
-		//	var bstr = Runtime.InteropServices.Marshal.SecureStringToBSTR(str);
-		//	var s = Runtime.InteropServices.Marshal.PtrToStringBSTR(bstr);
-		//	Runtime.InteropServices.Marshal.FreeBSTR(bstr);
-		//	return s;
-		//}
 		/// <summary>
 		/// This is the catchall page.
 		/// It shows when a random page has been triggered that we don't actually serve. (kinda like a 404)
@@ -24,18 +18,18 @@ namespace System.Net {
 				Html.p(Html.b("This is your QueryInfo: ") + Html.txt(ServerFrameWork.RecursiveToString(request.QueryString))) +
 				Html.p(Html.b("Which means: ") + Html.txt(ServerFrameWork.ReadQuery(request.QueryString))) +
 				Html.p(Html.b("This is your Endpoint: ") + Html.txt(ServerFrameWork.RecursiveToString(request.RemoteEndPoint))) +
-				Html.p(Html.b("Which means your IP is: ") + Html.txt(request.RemoteEndPoint.Address + "and you came from port" + request.RemoteEndPoint.Port)) +
+				Html.p(Html.b("Which means your IP is: ") + Html.txt(request.RemoteEndPoint.Address + " and you came from port " + request.RemoteEndPoint.Port)) +
 				Html.br + 
 				Html.h2("Now Feck off!") + 
 				Html.p("by the way, this info is not stored in any way"));// (HttpListenerRequest request, HttpListenerResponse special) => "Ello, it's me. The Catchall";
 		public ServerFrameWork.errorPage ErrorPage => null;
 		public Dictionary<string, ServerFrameWork.respoMethod> PathsWithResponders =>
-			new Dictionary<string, ServerFrameWork.respoMethod>() {
+			new() {
 				{ "", Catchall }
 			};
 		public void Init() => C.WriteLine("Demo Server Initializing");
 		public void Stop() => C.WriteLine("Demo server stopping");
-		public List<ICommand> AvaliableCommands => new List<ICommand>() {
+		public List<ICommand> AvaliableCommands => [
 			new SimpleCommand("demo", "A demo help message", (l) => C.WriteLine("Demo command Executed!")),
 			new SimpleCommand("random", "Prints a random number!", (l) => C.WriteLine(new Random().Next())),
 			new SimpleCommand("randLen", "Prints a random number with a given length", (l) => {
@@ -73,6 +67,6 @@ namespace System.Net {
 				C.WriteLine("If you call without parameters you get a example question");
 				C.WriteLine("Usage: question option1 option2 [option3 ... optionN]");
 			})
-		};
+		];
 	}
 }

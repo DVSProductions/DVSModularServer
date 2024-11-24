@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -37,6 +39,12 @@ namespace DVSModularServer {
 			/// </summary>
 			public readonly SortedDictionary<string, ServerFrameWork.respoMethod> responders;
 			/// <summary>
+			/// A special list of responders that respond to requests that start with it's path 
+			/// as an example "/test/a/b/c" would be responded to by "test/a"
+			/// </summary>
+			public readonly SortedList<string, ServerFrameWork.respoMethod> depthResponders;
+			public readonly bool supportsDepthResponders;
+			/// <summary>
 			/// Server "Directory"
 			/// </summary>
 			public readonly string BasePath;
@@ -47,8 +55,11 @@ namespace DVSModularServer {
 			public Server(IServer s, IServerMeta m) {
 				serv = s;
 				responders = new SortedDictionary<string, ServerFrameWork.respoMethod>();
+				var descendingComparer = Comparer<string>.Create((x, y) => string.Compare(y, x, StringComparison.InvariantCulture));
+				depthResponders = new SortedList<string, ServerFrameWork.respoMethod>(descendingComparer);
 				Name = m.Name;
 				BasePath = m.BasePath;
+				supportsDepthResponders = s is IServer2;
 			}
 		}
 		/// <summary>
@@ -80,24 +91,25 @@ namespace DVSModularServer {
 		}
 		/// <summary>
 		/// Stops all servers and then destroys all resources
-		/// </summary>
+		/// </summary>	
 		public void Stop() {
 			listener.Stop();
-			if (Servers.Count != 0 && lazyServerList != null) {
+			if(Servers.Count != 0 && lazyServerList != null) {
 				var enders = new Stack<System.Threading.Thread>();
 				C.WriteLineI($"Sending stop message to Servers");
-				foreach (var s in Servers) {
-					var t = new System.Threading.Thread((a) => { try { s.Value.serv.Stop(); } catch (Exception ex) { C.WriteLineE(ex); } }) {
+				foreach(var s in Servers) {
+					var t = new System.Threading.Thread((a) => { try { s.Value.serv.Stop(); } catch(Exception ex) { C.WriteLineE(ex); } }) {
 						Name = $"~{s.Key}"
 					};
 					t.Start();
 					enders.Push(t);
 				}
 				C.WriteLineI("Waiting for servers to stop...");
-				while (enders.Count != 0) {
-					if (enders.Peek().ThreadState != System.Threading.ThreadState.Running)
+				while(enders.Count != 0) {
+					if(enders.Peek().ThreadState != System.Threading.ThreadState.Running)
 						enders.Pop().Join();
-					else System.Threading.Tasks.Task.Delay(100);
+					else
+						System.Threading.Tasks.Task.Delay(100);
 				}
 				C.WriteLineI("Servers stopped!");
 			}
@@ -109,20 +121,28 @@ namespace DVSModularServer {
 			LoadModules();
 			C.WriteLine("Preparing Servers...");
 			int success = 0, failed = 0;
-			foreach (var s in lazyServerList) {
+			foreach(var s in lazyServerList) {
 				try {
-					if (ImportServer(s)) success++;
-					else failed++;
+					if(ImportServer(s))
+						success++;
+					else
+						failed++;
 				}
-				catch (Exception ex) {
+				catch(Exception ex) {
 					C.WriteLineE($"Exception in \"{s.Metadata.Name}\": {ex}");
 					failed++;
 				}
 			}
 			C.WriteLine($"Servers Loaded: {success} Successfully and {failed} Failed.");
-			if (success == 0) throw new DllNotFoundException("Cannot Find any servers");
+			if(success == 0)
+				throw new DllNotFoundException("Cannot Find any servers");
 			listener.Start();
 		}
+#if DEBUG
+		const string domainListen = "localhost";
+#else
+		const string domainListen = "*";
+#endif
 		/// <summary>
 		/// Loads a given server and all its commands
 		/// </summary>
@@ -132,33 +152,46 @@ namespace DVSModularServer {
 				var store = new Server(s.Value, s.Metadata);
 				store.serv.Init();
 				var pairs = s.Value.PathsWithResponders;
-				if (pairs == null || pairs.Count == 0)
+				if((pairs == null || pairs.Count == 0) && !(store.serv is IServer2))
 					throw new MissingFieldException("Pairs are required (Is the server file damaged?)");
-				foreach (var p in pairs) {
+				foreach(var p in pairs) {
 					var path = $"/{store.BasePath}{(string.IsNullOrEmpty(p.Key) ? p.Key : $"/{p.Key}")}";
-					var url = $"{protocol}*:{Program.Config.Port}{path}/";
+					var url = $"{protocol}{domainListen}:{Program.Config.Port}{path}/";
 					listener.Prefixes.Add(url);
 					store.responders.Add(path, p.Value);
+				}
+				if(store.serv is IServer2 server2) {
+					var pairs2 = server2.GenerateDepthResponders();
+					if((pairs2 is null || pairs2.Count == 0) && (pairs is null || pairs.Count == 0))
+						throw new MissingFieldException("Pairs are required (Is the server file damaged?)");
+					if(pairs2 != null)
+						foreach(var p in pairs2) {
+							var path = $"/{store.BasePath}{(string.IsNullOrEmpty(p.Key) ? p.Key : $"/{p.Key}")}";
+							var url = $"{protocol}{domainListen}:{Program.Config.Port}{path}/";
+							C.WriteLine($"Adding: {url}");
+							listener.Prefixes.Add(url);
+							store.depthResponders.Add(path, p.Value);
+						}
 				}
 				Servers.Add(store.BasePath, store);
 				ServerNames.Add(store.serv, store.BasePath);
 				var i = C.Input as Interactive;
 				var serverVerbName = store.BasePath.Trim().ToLowerInvariant().Replace(" ", "_");
-				foreach (var comm in store.serv.AvaliableCommands) {
-					if (string.IsNullOrWhiteSpace(comm.Verb)) {
+				foreach(var comm in store.serv.AvaliableCommands) {
+					if(string.IsNullOrWhiteSpace(comm.Verb)) {
 						C.WriteLineE($"Command name Violation! \"{comm.Verb ?? "null"}\" is not a valid name!");
 						continue;
 					}
-					if (comm.Verb.Contains(" "))
+					if(comm.Verb.Contains(" "))
 						C.WriteLineI($"Commands should not contain spaces: \"{comm.Verb}\"");
-					if (comm.Verb.Contains("\t"))
+					if(comm.Verb.Contains("\t"))
 						C.WriteLineI($"Commands should not contain tabs: \"{comm.Verb}\"");
 					i.AddCommand($"{serverVerbName}.{comm.Verb.Trim().ToLowerInvariant().Replace(" ", "_").Replace("\t", "_")}", comm);
 				}
 				C.WriteLineS($"\tLoaded {store.Name}.");
 				return true;
 			}
-			catch (MissingFieldException ex) {
+			catch(MissingFieldException ex) {
 				try {
 					C.WriteLineE($"\tLoading {s.Metadata.Name} failed!: {ex}");
 				}
@@ -174,38 +207,38 @@ namespace DVSModularServer {
 		private static List<Assembly> EncryptedLoader() {
 			var ret = new List<Assembly>();
 			C.WriteLine("Loading Encrypted Servers...");
-			foreach (var module in Directory.EnumerateFiles("Servers/", "*.edll")) {
+			foreach(var module in Directory.EnumerateFiles("Servers/", "*.edll")) {
 				try {
-					using (var fs = new FileStream(module, FileMode.Open)) {
+					using(var fs = new FileStream(module, FileMode.Open)) {
 #pragma warning disable CA2000 //Intentionally leaving the archive open so the garbage collector doesn't kill the module
-						using (var a = new System.IO.Compression.ZipArchive(fs, System.IO.Compression.ZipArchiveMode.Read)) {
-#pragma warning restore CA2000 
+						using(var a = new System.IO.Compression.ZipArchive(fs, System.IO.Compression.ZipArchiveMode.Read)) {
+#pragma warning restore CA2000
 							var files = a.Entries;
 							EncryptedServerConfig esc = null;
-							foreach (var file in files) {
-								if (file.Name == EncryptedServerConfig.ConfigFileName) {
-									using (var r = new StreamReader(file.Open())) {
+							foreach(var file in files) {
+								if(file.Name == EncryptedServerConfig.ConfigFileName) {
+									using(var r = new StreamReader(file.Open())) {
 										esc = EncryptedServerConfig.Load(r);
 									}
 								}
 							}
-							if (esc == null)
+							if(esc == null)
 								throw new FileNotFoundException("Server Config file Missing in package");
 							var decr = new ServerDecryptor(a, esc);
 							System.Security.SecureString password;
 							do {
 								password = C.Input.PWPrompt($"Password for {module}: ");
-								if (password.Length == 0) {
-									if (C.Input.PromptYN("Do you wish to abort Decrypting this module?"))
+								if(password.Length == 0) {
+									if(C.Input.PromptYN("Do you wish to abort Decrypting this module?"))
 										throw new KeyNotFoundException("Decryption was aborted.");
 								}
-							} while (!decr.DecryptAll(password));
+							} while(!decr.DecryptAll(password));
 							var decrypted = decr.DecryptedFiles;
 							ret.Add(Assembly.Load(decrypted[esc.ServerFileName]));
 						}
 					}
 				}
-				catch (Exception ex) {
+				catch(Exception ex) {
 					C.WriteLineE($"Error loading encrypted module \"{module}\": {ex}");
 				}
 			}
@@ -217,15 +250,15 @@ namespace DVSModularServer {
 		private void LoadModules() {
 			var lst = EncryptedLoader();
 			C.WriteLine("Loading Modules...");
-			using (var catalog = new AggregateCatalog()) {
-				using (var pAS = new AssemblyCatalog(typeof(Program).Assembly)) {
+			using(var catalog = new AggregateCatalog()) {
+				using(var pAS = new AssemblyCatalog(typeof(Program).Assembly)) {
 					catalog.Catalogs.Add(pAS);
 					var toDispose = new List<AssemblyCatalog>();
-					foreach (var a in lst) {
+					foreach(var a in lst) {
 						toDispose.Add(new AssemblyCatalog(a));
 						catalog.Catalogs.Add(toDispose[toDispose.Count - 1]);
 					}
-					using (var DC = new DirectoryCatalog("Servers/", "*.dll")) {
+					using(var DC = new DirectoryCatalog("Servers/", "*.dll")) {
 						catalog.Catalogs.Add(DC);
 #pragma warning disable CA2000 //THIS MUST NOT BE DISPOSED!
 						var _container = new CompositionContainer(catalog);
@@ -233,11 +266,11 @@ namespace DVSModularServer {
 						try {
 							_container.ComposeParts(this);
 						}
-						catch (CompositionException compositionException) {
+						catch(CompositionException compositionException) {
 							C.WriteLineE(compositionException.ToString());
 						}
 						finally {
-							foreach (var ac in toDispose)
+							foreach(var ac in toDispose)
 								ac.Dispose();
 						}
 					}
@@ -274,11 +307,12 @@ namespace DVSModularServer {
 		/// </summary>
 		/// <param name="url">Server message</param>
 		private static string GetServerString(string url) {
-			if (string.IsNullOrWhiteSpace(url))
+			if(string.IsNullOrWhiteSpace(url))
 				return "";
 			url = url.TrimStart('/');
 			var n = url.Length;
-			while (n > 0 && url[--n] != '/') ;
+			while(n > 0 && url[--n] != '/')
+				;
 			return n == 0 ? url : url.Substring(0, n);
 		}
 		/// <summary>
@@ -287,15 +321,15 @@ namespace DVSModularServer {
 		public void Run() {
 			C.WriteLine("Listening...");
 			try {
-				while (listener.IsListening)
+				while(listener.IsListening)
 					ServerFrameWork.QUWI("Handler", Handler, listener.GetContext());
 			}
-			catch (Exception e) {
+			catch(Exception e) {
 				try {
-					if (listener.IsListening != false)
+					if(listener.IsListening != false)
 						C.WriteLineE(e);
 				}
-				catch (Exception ex) { C.WriteLineE(ex); }
+				catch(Exception ex) { C.WriteLineE(ex); }
 			}
 		}
 		/// <summary>
@@ -304,21 +338,35 @@ namespace DVSModularServer {
 		/// <param name="context"></param>
 		private void Handler(HttpListenerContext context) {
 			var pat = context.Request.Url.AbsolutePath;
-			if (!Servers.TryGetValue(GetServerString(pat), out var ThisServer)) {
+			if(!Servers.TryGetValue(GetServerString(pat), out var ThisServer)) {
 				var buf = Encoding.UTF8.GetBytes(ShowErrorPage(context.Response, HttpStatusCode.NotFound, ""));
 				context.Response.ContentLength64 = buf.Length;
 				context.Response.OutputStream.Write(buf, 0, buf.Length);
 				return;
 			}
-			if (!ThisServer.responders.TryGetValue(pat, out var ServerMethod)) {
-				ServerMethod = ThisServer.serv.Catchall ?? ((a, b) => ShowErrorPage(b, ThisServer.serv.ErrorPage, HttpStatusCode.NotFound, ""));
+			//check if this path matches a regular responder
+			if(!ThisServer.responders.TryGetValue(pat, out var ServerMethod)) {
+				//if not check if we support depth responders
+				var found = false;
+				if(ThisServer.supportsDepthResponders) {
+					//if we do search if a depth responder accepts this path
+					foreach(var kv in ThisServer.depthResponders) {
+						if(kv.Key.StartsWith(pat, StringComparison.InvariantCulture)) {
+							ServerMethod = kv.Value;
+							found = true;
+							break;
+						}
+					}
+				}
+				if(!found)
+					ServerMethod = ThisServer.serv.Catchall ?? ((a, b) => ShowErrorPage(b, ThisServer.serv.ErrorPage, HttpStatusCode.NotFound, ""));
 			}
 			try {
 				string msg;
 				try {
 					msg = ServerMethod(context.Request, context.Response);
 				}
-				catch (Exception ex) {
+				catch(Exception ex) {
 					msg = ShowErrorPage(context.Response, ThisServer.serv.ErrorPage, HttpStatusCode.InternalServerError, ex.Message);
 				}
 				if(msg != null) {

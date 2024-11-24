@@ -128,20 +128,27 @@ namespace DVSModularServer {
 		/// Hides the date in <see cref="typedText"/>
 		/// </summary>
 		private void HideTypedText() => HideStr(prefix, typedText);
+		internal void InteractiveThreadWrapper(object? o)=> InteractiveThread((CancellationToken)o);
 		/// <summary>
 		/// The main interactive logic
 		/// </summary>
-		public void InteractiveThread() {
+		public void InteractiveThread(CancellationToken cancellationToken) {
 			if(queryModeActive) {
 				while(queryModeActive) {
-					while(!Console.KeyAvailable) Thread.Sleep(50);
+					while(!Console.KeyAvailable) {
+						Thread.Sleep(50);
+						cancellationToken.ThrowIfCancellationRequested();
+					}
 					QueryMode(Console.ReadKey(true));
 				}
 				return;
 			}
 			try {
 				while(!Program.stop) {
-					while(!Console.KeyAvailable) Thread.Sleep(50);
+					while(!Console.KeyAvailable) {
+						Thread.Sleep(50);
+						cancellationToken.ThrowIfCancellationRequested();
+					}
 					var k = Console.ReadKey(true);
 					if(queryModeActive)
 						QueryMode(k);
@@ -150,6 +157,10 @@ namespace DVSModularServer {
 				}
 			}
 			catch(ThreadAbortException) {
+				deleteSelf();
+				Program.stop = true;
+			}
+			catch(OperationCanceledException) {
 				deleteSelf();
 				Program.stop = true;
 			}
@@ -489,7 +500,11 @@ namespace DVSModularServer {
 			printed = false;
 			queryModeActive = true;
 			if(InCommand)
-				ServerFrameWork.QUWI("Prompt", InteractiveThread);
+				ServerFrameWork.QUWI("Prompt",()=> {
+					var cts = new CancellationTokenSource();
+					InteractiveThread(cts.Token);
+				}
+					);
 			if(!printed)
 				Console.Write($"\r{GetTypedText()}");
 		}
