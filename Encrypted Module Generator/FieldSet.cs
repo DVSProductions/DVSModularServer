@@ -1,8 +1,7 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-namespace Encrypted_Module_Generator; 
+namespace Encrypted_Module_Generator;
 internal class FieldSet : ContentControl {
 	/// <summary>
 	/// Registers a dependency property as backing store for the Content property

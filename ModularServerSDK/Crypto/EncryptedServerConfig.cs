@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Serialization;
-namespace System; 
+namespace System;
 /// <summary>
 /// Configuration file for encrypted server modules. rawr
 /// This config file is included in the compressed result archive as metadata

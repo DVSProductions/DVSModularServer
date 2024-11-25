@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
-namespace CryptoDemoAES; 
+namespace CryptoDemoAES;
 [Export(typeof(IServerCrypto))]
 public class Class1 : IServerCrypto {
 	/// <summary>
@@ -47,8 +47,8 @@ public class Class1 : IServerCrypto {
 		UInt16 b;
 		var i = 0;
 		do {
-			b = (UInt16) Marshal.ReadInt16(bstr, i);
-			s.AppendChar((char) (UInt16.MaxValue - b));
+			b = (UInt16)Marshal.ReadInt16(bstr, i);
+			s.AppendChar((char)(UInt16.MaxValue - b));
 			i += 2;
 		} while(b != '\0');
 		Marshal.ZeroFreeBSTR(bstr);

@@ -1,4 +1,4 @@
-﻿namespace ModularServerSDK; 
+﻿namespace ModularServerSDK;
 /// <summary>
 /// Interface which all configuration classes need to implement
 /// in order for them to be used by the <see cref="ConfigLoader"/>

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace System; 
+﻿namespace System;
 /// <summary>
 /// All public Functions that the interactive shell exposes for general use.
 /// Used in the <see cref="C"/> for you to interact with the user.

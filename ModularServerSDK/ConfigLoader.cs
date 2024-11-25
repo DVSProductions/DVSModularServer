@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Serialization;
-namespace ModularServerSDK; 
+namespace ModularServerSDK;
 /// <summary>
 /// A tool for generating XML Configuration files using <see cref="IConfig"/> instances
 /// Step1: Generate your own config class that implements <see cref="IConfig"/>

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-namespace System; 
+﻿namespace System;
 /// <summary>
 /// More advanced Command helper class that stores any type for your functions.
 /// This allows you to generate simple Lambdas / Actions that may manipulate a object and store data
@@ -36,8 +35,7 @@ public class ControllingCommand<T> : ICommand {
 		if(string.IsNullOrWhiteSpace(name))
 			throw new ArgumentException("Commands need a name. How do you expect them to be called otherwise?", nameof(name));
 		Verb = name.ToUpperInvariant();
-		if(objectToControl is object o && o == null)
-			throw new ArgumentNullException(nameof(objectToControl));
+		ArgumentNullException.ThrowIfNull(objectToControl, nameof(objectToControl));
 		obj = objectToControl;
 		ex = onExecute ?? throw new ArgumentNullException(nameof(onExecute));
 		he = onHelp ?? throw new ArgumentNullException(nameof(onHelp));

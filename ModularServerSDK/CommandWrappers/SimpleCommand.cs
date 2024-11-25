@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace System; 
+﻿namespace System;
 /// <summary>
 /// A premade command class so you don't have to make them yourself
 /// <para>
@@ -28,9 +26,9 @@ public class SimpleCommand : ICommand {
 	/// <param name="helpmsg">the message which to display when the user uses the help command. lines are \n terminated</param>
 	/// <param name="comm">The actual command that gets executed.</param>
 	public SimpleCommand(string verb, string helpmsg, Action<List<string>> comm) {
-		if (string.IsNullOrWhiteSpace(helpmsg))
+		if(string.IsNullOrWhiteSpace(helpmsg))
 			throw new ArgumentException("Helpmsg Cannot be empty. Tell your user about yourself!", nameof(helpmsg));
-		if (string.IsNullOrWhiteSpace(verb))
+		if(string.IsNullOrWhiteSpace(verb))
 			throw new ArgumentNullException(nameof(verb), "Commands need a name. How do you expect them to be called otherwise?");
 		Verb = verb.ToUpperInvariant();
 		a = comm ?? throw new ArgumentNullException(nameof(comm), "You need to provide a command");
@@ -38,7 +36,7 @@ public class SimpleCommand : ICommand {
 	}
 	public void Execute(List<string> parameters) => a(parameters);
 	public void Help(List<string> parameters) {
-		foreach (var s in msg.Split('\n'))
+		foreach(var s in msg.Split('\n'))
 			C.WriteLine($"{s}");
 	}
 }

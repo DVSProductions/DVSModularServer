@@ -35,7 +35,7 @@ internal sealed partial class Interactive : IInteractive {
 	/// <summary>
 	/// play the notification sound
 	/// </summary>
-	public static void Notify() => ServerFrameWork.QUWI("Beep", () => Console.Write((byte)7));
+	public static void Notify() => ServerFrameWork.QUWI("Beep", () => Console.Write((char)7));
 	public string GetTypedText() { printed = true; return queryModeActive ? getPromptText?.Invoke() ?? string.Empty : prefix + typedText; }
 	/// <summary>
 	/// internal echo command. prints all list elements
@@ -88,7 +88,7 @@ internal sealed partial class Interactive : IInteractive {
 	/// Splits the command into command and Arguments
 	/// </summary>
 	/// <param name="s">prompt input</param>
-	static public (string? Command, List<string> Arguments) SplitCommand(string s) {
+	public static (string? Command, List<string> Arguments) SplitCommand(string s) {
 		string? command = null;
 		var ret = new List<string>();
 		var escape = false;

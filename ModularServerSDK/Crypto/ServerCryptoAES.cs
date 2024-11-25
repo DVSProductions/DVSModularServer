@@ -1,6 +1,5 @@
-﻿using System.IO;
-using System.Security.Cryptography;
-namespace System.Security; 
+﻿using System.Security.Cryptography;
+namespace System.Security;
 /// <summary>
 /// This is the underlying Encryption Implementation for the <see cref="CryptoWrapper{TCryptoProvider}"/>
 /// <para>
@@ -18,6 +17,8 @@ public class ServerCryptoAES : IServerCrypto {
 	/// <param name="data">Data to decrypt</param>
 	/// <param name="mutatedKey">The password</param>
 	public byte[] Decrypt(byte[] data, SecureString mutatedKey) {
+		ArgumentNullException.ThrowIfNull(data);
+		ArgumentNullException.ThrowIfNull(mutatedKey);
 		using var encryptor = Aes.Create();
 		using(var pdb = CryptoTools.DeriveBytes(mutatedKey, salt)) {
 			encryptor.Key = pdb.GetBytes(32);
@@ -36,6 +37,8 @@ public class ServerCryptoAES : IServerCrypto {
 	/// <param name="mutatedKey">The password</param>
 	[Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
 	public byte[] Decrypt(byte[] data, SecureString mutatedKey, byte[] salt) {
+		ArgumentNullException.ThrowIfNull(data);
+		ArgumentNullException.ThrowIfNull(mutatedKey);
 		using var encryptor = Aes.Create();
 		using(var pdb = CryptoTools.DeriveBytes(mutatedKey, salt)) {
 			encryptor.Key = pdb.GetBytes(32);
@@ -52,6 +55,8 @@ public class ServerCryptoAES : IServerCrypto {
 	/// <param name="data">Data to encrypt</param>
 	/// <param name="mutatedKey">The password</param>
 	public byte[] Encrypt(byte[] data, SecureString mutatedKey) {
+		ArgumentNullException.ThrowIfNull(data);
+		ArgumentNullException.ThrowIfNull(mutatedKey);
 		using var encryptor = Aes.Create();
 		using(var pdb = CryptoTools.DeriveBytes(mutatedKey, salt)) {
 			encryptor.Key = pdb.GetBytes(32);
@@ -70,6 +75,8 @@ public class ServerCryptoAES : IServerCrypto {
 	/// <param name="mutatedKey">The password</param>
 	[Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
 	public byte[] Encrypt(byte[] data, SecureString mutatedKey, byte[] salt) {
+		ArgumentNullException.ThrowIfNull(data);
+		ArgumentNullException.ThrowIfNull(mutatedKey);
 		using var encryptor = Aes.Create();
 		using(var pdb = CryptoTools.DeriveBytes(mutatedKey, salt)) {
 			encryptor.Key = pdb.GetBytes(32);

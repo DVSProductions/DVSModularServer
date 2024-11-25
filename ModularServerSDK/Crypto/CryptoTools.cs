@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-namespace System.Security; 
+namespace System.Security;
 /// <summary>
 /// Contains some methods to make Cryptography easier
 /// </summary>

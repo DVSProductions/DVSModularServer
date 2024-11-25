@@ -1,6 +1,6 @@
 ﻿using ModularServerSDK.Tools;
 
-namespace System; 
+namespace System;
 /// <summary>
 /// This is a universal hub for anyone to get information about the server software.
 /// </summary>
@@ -21,5 +21,5 @@ public static class ServerInfo {
 	/// <summary>
 	/// Get the domain of the server
 	/// </summary>
-	public readonly static SetOnceObject<string> Domain = new();
+	public static readonly SetOnceObject<string> Domain = new();
 }

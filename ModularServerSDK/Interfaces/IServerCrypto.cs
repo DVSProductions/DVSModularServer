@@ -1,4 +1,4 @@
-﻿namespace System.Security; 
+﻿namespace System.Security;
 /// <summary>
 /// Interface that all encryption algorithms have to implement
 /// </summary>

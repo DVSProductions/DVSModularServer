@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-namespace Encrypted_Module_Generator; 
+namespace Encrypted_Module_Generator;
 /// <summary>
 /// Interaktionslogik für "App.xaml"
 /// </summary>

@@ -1,9 +1,6 @@
 ﻿using ModularServerSDK.Tools;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Threading;
-namespace System; 
+namespace System;
 /// <summary>
 /// Your Personal LogMan.
 /// <list type="bullet">
@@ -69,7 +66,7 @@ public static class L {
 	public static Action Init(string logfileName) {
 		Logfile.Set(logfileName);
 		var source = new CancellationTokenSource();
-		var t = ServerFrameWork.ST("LogMan",()=> LoggingThread(source.Token));
+		var t = ServerFrameWork.ST("LogMan", () => LoggingThread(source.Token));
 		return () => { source.Cancel(); t.Join(); };
 	}
 	/// <summary>

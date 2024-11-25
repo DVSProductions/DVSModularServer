@@ -96,7 +96,7 @@ internal class ServerManager : IDisposable {
 			var enders = new Stack<System.Threading.Thread>();
 			C.WriteLineI($"Sending stop message to Servers");
 			foreach(var s in Servers) {
-				var t = new System.Threading.Thread((a) => { try { s.Value.serv.Stop(); } catch(Exception ex) { C.WriteLineE(ex); } }) {
+				var t = new System.Threading.Thread((a) => { try { s.Value.serv.Shutdown(); } catch(Exception ex) { C.WriteLineE(ex); } }) {
 					Name = $"~{s.Key}"
 				};
 				t.Start();
@@ -137,7 +137,7 @@ internal class ServerManager : IDisposable {
 		listener.Start();
 	}
 #if DEBUG
-	const string domainListen = "localhost";
+	private const string domainListen = "localhost";
 #else
 	private const string domainListen = "*";
 #endif
@@ -323,7 +323,7 @@ internal class ServerManager : IDisposable {
 		}
 		catch(Exception e) {
 			try {
-				if(listener.IsListening != false)
+				if(listener.IsListening)
 					C.WriteLineE(e);
 			}
 			catch(Exception ex) { C.WriteLineE(ex); }

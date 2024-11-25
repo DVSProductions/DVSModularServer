@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-namespace System; 
+﻿namespace System;
 /// <summary>
 /// A class that will hold your commands <para>
 /// allows you to avoid creating your own class</para>

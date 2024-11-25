@@ -1,11 +1,11 @@
 ﻿namespace DVSModularServer;
-internal class Program {
-	public static ServerManager? man = null;
+internal sealed class Program {
+	public static ServerManager? man;
 	/// <summary>
 	/// Public access to the configuration file
 	/// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-	public static Config Config { get; private protected set; }
+	public static Config Config { get; private set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 	/// <summary>
 	/// Was the server stopping intentional?
@@ -50,8 +50,10 @@ internal class Program {
 			while(true) {
 				Console.Write($"{msg}(y/n)> ");
 				c = Console.ReadKey(false);
-				if(c.KeyChar is 'y' or 'Y') return true;
-				else if(c.KeyChar is 'n' or 'N') return false;
+				if(c.KeyChar is 'y' or 'Y')
+					return true;
+				else if(c.KeyChar is 'n' or 'N')
+					return false;
 			}
 		}
 		catch {
@@ -80,6 +82,7 @@ internal class Program {
 		catch { }
 #endif
 	}
+#if !DEBUG
 	/// <summary>
 	/// Try to extract the lastest SDL dll
 	/// </summary>
@@ -96,6 +99,7 @@ internal class Program {
 			}
 		} while(again);
 	}
+#endif
 	/// <summary>
 	/// Required so we can get our own dll beforehand
 	/// </summary>
@@ -128,14 +132,14 @@ internal class Program {
 	/// <summary>
 	/// Launches the Interactive Shell Thread and returns it
 	/// </summary>
-	private static (Thread thread,CancellationTokenSource cancelToken) RunInteractiveShell() {
+	private static (Thread thread, CancellationTokenSource cancelToken) RunInteractiveShell() {
 		var source = new CancellationTokenSource();
 		var t = new Thread(new Interactive(source).InteractiveThread) {
 			Priority = ThreadPriority.BelowNormal,
 			Name = "I"
 		};
 		t.Start();
-		return (t,source);
+		return (t, source);
 	}
 	/// <summary>
 	/// Launches the server manager and waits for it to shut down
@@ -164,7 +168,8 @@ internal class Program {
 		t.Start();
 		while((t.IsAlive || !cleanexit) && !stop)
 			Task.Delay(1000).Wait();
-		if(cleanexit) man.Stop();
+		if(cleanexit)
+			man.Stop();
 		stop = true;
 		t.Join();
 	}

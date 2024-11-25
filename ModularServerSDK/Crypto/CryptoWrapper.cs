@@ -1,5 +1,5 @@
 ﻿using System.Text;
-namespace System.Security; 
+namespace System.Security;
 /// <summary>
 /// This class wrappes a <see cref="IServerCrypto"/> crypto provider and exposes easy to use functions for it.
 /// </summary>
@@ -7,7 +7,7 @@ namespace System.Security;
 public sealed class CryptoWrapper<TCryptoProvider> : IServerCrypto where TCryptoProvider : IServerCrypto {
 	private readonly TCryptoProvider CryptoProvider;
 	public CryptoWrapper(TCryptoProvider provider) {
-		if (provider.GetType().IsGenericType && provider.GetType().GetGenericTypeDefinition() == typeof(CryptoWrapper<>)) {
+		if(provider.GetType().IsGenericType && provider.GetType().GetGenericTypeDefinition() == typeof(CryptoWrapper<>)) {
 			throw new ArgumentException("A Crypto Wrapper must not contain a Crypto Wrapper!");
 		}
 		CryptoProvider = provider;
@@ -55,10 +55,12 @@ public sealed class CryptoWrapper<TCryptoProvider> : IServerCrypto where TCrypto
 	/// </summary>
 	/// <param name="key"></param>
 	public SecureString KeyMutation(string key) {
-		if (string.IsNullOrEmpty(key)) return new SecureString();
+		if(string.IsNullOrEmpty(key))
+			return new SecureString();
 		var ss = new SecureString();
 		try {
-			foreach (var c in key) ss.AppendChar(c);
+			foreach(var c in key)
+				ss.AppendChar(c);
 			return CryptoProvider.KeyMutation(ss);
 		}
 		finally {

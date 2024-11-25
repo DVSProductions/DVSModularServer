@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-namespace System; 
+﻿namespace System;
 /// <summary>
 /// Interface for generating your own commands to be used in the interactive 
 /// command prompt

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
-namespace ModularServerSDK.Tools; 
+namespace ModularServerSDK.Tools;
 public static class TablePrinter {
 	private const char h = '=', c = '+', v = '|';
 	public static StringBuilder GenerateTable<T>(IEnumerable<T> data, Func<T, string[]> RowGenerator, string[] Header) {

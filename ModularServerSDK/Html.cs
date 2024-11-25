@@ -1,4 +1,4 @@
-﻿namespace System; 
+﻿namespace System;
 /// <summary>
 /// A helper class designed to help create html while minimizing code
 /// </summary>
@@ -6,7 +6,7 @@ public static class Html {
 	/// <summary>
 	/// HTML line break
 	/// </summary>
-	public readonly static string br = "</br>";
+	public static readonly string br = "</br>";
 
 	/// <summary>
 	/// HTML escape substitutions
@@ -24,8 +24,9 @@ public static class Html {
 	/// </summary>
 	/// <param name="stringToEscape">text to escape</param>
 	public static string Escape(string stringToEscape) {
+		ArgumentNullException.ThrowIfNull(stringToEscape);
 		foreach(var t in EscapeChars)
-			stringToEscape = stringToEscape.Replace(t.Item1, t.Item2);
+			stringToEscape = stringToEscape.Replace(t.Item1, t.Item2, StringComparison.Ordinal);
 		return stringToEscape;
 	}
 	/// <summary>

@@ -8,6 +8,7 @@
     <PublishAot>False</PublishAot>
     <InvariantGlobalization>true</InvariantGlobalization>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <AnalysisLevel>latest-all</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>

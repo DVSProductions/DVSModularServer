@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-namespace System;
+﻿namespace System;
 /// <summary>
 /// Interface for all custom servers 
 /// </summary>
@@ -29,7 +28,7 @@ public interface IServer {
 	/// </para>
 	/// Also all Connections, Streams and open Files should be closed
 	/// </summary>
-	void Stop();
+	void Shutdown();
 	/// <summary>
 	/// Returns all commands accepted by this Server <para>
 	/// DON'T add your own prefixes to command names. The Modular Server System will take care of that

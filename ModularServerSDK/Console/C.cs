@@ -1,8 +1,7 @@
 ﻿using ModularServerSDK.Tools;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System; 
+namespace System;
 /// <summary>
 /// This is your colorful and amazing console interface. Use it!
 /// <para>
@@ -55,7 +54,7 @@ public static class C {
 		(msg) => {
 			width = 0;
 			using var _ = new ColorHandler(ConsoleColor.Black, ConsoleColor.DarkGray);
-			int lastLeft = -1;
+			var lastLeft = -1;
 			do {
 				width++;
 				lastLeft = Console.CursorLeft;

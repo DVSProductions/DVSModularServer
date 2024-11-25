@@ -1,4 +1,4 @@
-﻿namespace System; 
+﻿namespace System;
 /// <summary>
 /// Sets Console Color by Exploiting <see cref="IDisposable"/> for minimal code:
 /// <c>
@@ -21,11 +21,11 @@ public sealed class ColorHandler : IDisposable {
 	/// <param name="foreground">Is <see cref="Nullable"/>!</param>
 	/// <param name="background">Is <see cref="Nullable"/>!</param>
 	public ColorHandler(ConsoleColor? foreground, ConsoleColor? background) {
-		if (foreground.HasValue) {
+		if(foreground.HasValue) {
 			fg = Console.ForegroundColor;
 			Console.ForegroundColor = foreground.Value;
 		}
-		if (background.HasValue) {
+		if(background.HasValue) {
 			bg = Console.BackgroundColor;
 			Console.BackgroundColor = background.Value;
 		}
@@ -34,9 +34,9 @@ public sealed class ColorHandler : IDisposable {
 	/// Handler for the <see cref="using"/> directive
 	/// </summary>
 	public void Dispose() {
-		if (fg.HasValue)
+		if(fg.HasValue)
 			Console.ForegroundColor = fg.Value;
-		if (bg.HasValue)
+		if(bg.HasValue)
 			Console.BackgroundColor = bg.Value;
 	}
 }

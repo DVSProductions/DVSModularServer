@@ -1,5 +1,4 @@
-﻿using System;
-namespace ModularServerSDK.Tools; 
+﻿namespace ModularServerSDK.Tools;
 /// <summary>
 /// This datastructure ensures that clients will always get the most up to date version of data.
 /// Also it ensures that complicated operations only get executed when needed and not everytime a user requests something.

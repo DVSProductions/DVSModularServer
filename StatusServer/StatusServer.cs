@@ -1,12 +1,8 @@
 ﻿using ModularServerSDK;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Net;
-using System.Threading;
-namespace StatusServer; 
+namespace StatusServer;
 [Export(typeof(IServer))]
 [ExportMetadata("Name", "StatusServer")]
 [ExportMetadata("BasePath", dir)]
@@ -24,7 +20,7 @@ public class StatusServer : IServer {
 	private string StatusHandler(HttpListenerRequest request, HttpListenerResponse response) {
 		if(request.Url != null) {
 			var segment = request.Url.Segments.LastOrDefault();
-			if(segment != null && fileContent.TryGetValue(segment, out var contentArray)) 
+			if(segment != null && fileContent.TryGetValue(segment, out var contentArray))
 				return Convert.ToBase64String(contentArray);
 		}
 		response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -65,11 +61,12 @@ public class StatusServer : IServer {
 	public List<ICommand> AvaliableCommands => [];
 	public void Init() {
 		PathsWithResponders.Add("", StartPage);
-		if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+		if(!Directory.Exists(dir))
+			Directory.CreateDirectory(dir);
 		cfg = ConfigLoader.Load(dir + "\\" + Config.filename, new Config());
 		cts = new CancellationTokenSource();
 		foreach(var f in Directory.EnumerateFiles(dir)) {
-			if(f == dir + "\\" + Config.filename) 				
+			if(f == dir + "\\" + Config.filename)
 				continue;
 			lastWrite.Add(f, File.GetLastWriteTime(dir + "\\" + f));
 			PathsWithResponders.Add(f, StatusHandler);
@@ -80,5 +77,5 @@ public class StatusServer : IServer {
 		};
 		checkThread.Start();
 	}
-	public void Stop() => cts.Cancel();
+	public void Shutdown() => cts.Cancel();
 }

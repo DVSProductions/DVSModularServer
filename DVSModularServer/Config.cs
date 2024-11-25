@@ -1,9 +1,10 @@
 ﻿using ModularServerSDK;
+using System.Text.RegularExpressions;
 namespace DVSModularServer;
-public class Config : IConfig {
+internal partial class Config : IConfig {
 	public const string ConfigFile = "Config\\ServerConfig.xml";
-	public bool UseHttps { get; set; } 
-	public ushort Port { get; set; } 
+	public bool UseHttps { get; set; }
+	public ushort Port { get; set; }
 	public string Logfile { get; set; } = string.Empty;
 	/// <summary>
 	/// Domain name that all urls should point to
@@ -15,10 +16,10 @@ public class Config : IConfig {
 	/// A: There is no internet. (this function will fail)
 	/// B: A random or misspelled TLD has been used, making it impossible for this server to be reached
 	/// </summary>
-	private async Task<bool> TLDValidity() {
+	private bool TLDValidity() {
 		try {
 			using var httpClient = new HttpClient();
-			var response = await httpClient.GetStringAsync("http://data.iana.org/TLD/tlds-alpha-by-domain.txt");
+			var response = httpClient.GetStringAsync(new Uri("http://data.iana.org/TLD/tlds-alpha-by-domain.txt")).Result;
 			var lines = response.Split([Environment.NewLine, "\r\n", "\r", "\n"], StringSplitOptions.None);
 			var s = ReportBackDomain.Split('.');
 			var tld = s[^1].ToUpperInvariant();
@@ -33,7 +34,7 @@ public class Config : IConfig {
 	/// Prints a error message in case the TLD check fails and asks whether the check results should be ignored
 	/// </summary>
 	private bool AskForValidity() {
-		if(TLDValidity().Result)
+		if(TLDValidity())
 			return true;
 		C.WriteLineE($"ERROR: Top level domain not found! ({ReportBackDomain})");
 		C.WriteLine("This means that your Server might not be reachable!");
@@ -43,7 +44,7 @@ public class Config : IConfig {
 	/// Ensures that the <see cref="ReportBackDomain"/> is actually a domain
 	/// </summary>
 	public bool ValidateSettings() =>
-		System.Text.RegularExpressions.Regex.IsMatch(ReportBackDomain, @"^([\w\.\-]+)((\.(\w){2,63})+)$") && AskForValidity();
+		DomainValidationRegex().IsMatch(ReportBackDomain) && AskForValidity();
 	/// <summary>
 	/// Creates the default configureation
 	/// </summary>
@@ -65,4 +66,7 @@ public class Config : IConfig {
 		ReportBackDomain = "dvsproductions.de";
 		UseHttps = false;
 	}
+
+	[GeneratedRegex(@"^([\w\.\-]+)((\.(\w){2,63})+)$")]
+	private static partial Regex DomainValidationRegex();
 }

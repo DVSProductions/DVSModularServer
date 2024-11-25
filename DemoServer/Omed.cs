@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.Composition;
 using System.Security;
-namespace System.Net; 
+namespace System.Net;
 [Export(typeof(IServer))]
 [ExportMetadata("Name", "DemoServer")]
 [ExportMetadata("BasePath", "Demo")]
@@ -18,8 +18,8 @@ public class Omed : IServer {
 			Html.p(Html.b("Which means: ") + Html.txt(ServerFrameWork.ReadQuery(request.QueryString))) +
 			Html.p(Html.b("This is your Endpoint: ") + Html.txt(ServerFrameWork.RecursiveToString(request.RemoteEndPoint))) +
 			Html.p(Html.b("Which means your IP is: ") + Html.txt(request.RemoteEndPoint.Address + " and you came from port " + request.RemoteEndPoint.Port)) +
-			Html.br + 
-			Html.h2("Now Feck off!") + 
+			Html.br +
+			Html.h2("Now Feck off!") +
 			Html.p("by the way, this info is not stored in any way"));// (HttpListenerRequest request, HttpListenerResponse special) => "Ello, it's me. The Catchall";
 	public ServerFrameWork.errorPage? ErrorPage => null;
 	public Dictionary<string, ServerFrameWork.respoMethod> PathsWithResponders =>
@@ -27,7 +27,7 @@ public class Omed : IServer {
 			{ "", Catchall }
 		};
 	public void Init() => C.WriteLine("Demo Server Initializing");
-	public void Stop() => C.WriteLine("Demo server stopping");
+	public void Shutdown() => C.WriteLine("Demo server stopping");
 	public List<ICommand> AvaliableCommands => [
 		new SimpleCommand("demo", "A demo help message", (l) => C.WriteLine("Demo command Executed!")),
 		new SimpleCommand("random", "Prints a random number!", (l) => C.WriteLine(new Random().Next())),

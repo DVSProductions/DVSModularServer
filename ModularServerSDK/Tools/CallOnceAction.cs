@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ModularServerSDK.Tools; 
+﻿namespace ModularServerSDK.Tools;
 /// <summary>
 /// A class that ensures that the contained <see cref="Action"/> can only be run once. 
 /// Useful for setup Actions that shouldn't run twice.
@@ -68,6 +66,14 @@ public class CallOnceAction<T> {
 		action = call;
 	}
 	/// <summary>
+	/// Returns a new Call once Action that can be reset using the returned Action
+	/// </summary>
+	public CallOnceAction(Action<T> call, out Action reset) {
+		me = this;
+		action = call;
+		reset = () => me = this;
+	}
+	/// <summary>
 	/// Call the Action. Will only work once. Calling this twice will result in a exception
 	/// </summary>
 	public void Call(T param) {
@@ -77,13 +83,6 @@ public class CallOnceAction<T> {
 			action(param);
 			me = null;
 		}
-	}
-	/// <summary>
-	/// Returns a new Call once Action that can be reset using the returned Action
-	/// </summary>
-	public static Tuple<CallOnceAction<T>, Action> CreateWithReset(Action<T> call) {
-		var r = new CallOnceAction<T>(call);
-		return new Tuple<CallOnceAction<T>, Action>(r, () => r.me = r);
 	}
 }
 /// <summary>
@@ -111,6 +110,14 @@ public class CallOnceAction<T1, T2> {
 		action = call;
 	}
 	/// <summary>
+	/// Returns a new Call once Action that can be reset using the returned Action
+	/// </summary>
+	public CallOnceAction(Action<T1, T2> call, out Action reset) {
+		me = this;
+		action = call;
+		reset = () => me = this;
+	}
+	/// <summary>
 	/// Call the Action. Will only work once. Calling this twice will result in a exception
 	/// </summary>
 	public void Call(T1 p1, T2 p2) {
@@ -120,13 +127,6 @@ public class CallOnceAction<T1, T2> {
 			me = null;
 			action(p1, p2);
 		}
-	}
-	/// <summary>
-	/// Returns a new Call once Action that can be reset using the returned Action
-	/// </summary>
-	public static Tuple<CallOnceAction<T1, T2>, Action> CreateWithReset(Action<T1, T2> call) {
-		var r = new CallOnceAction<T1, T2>(call);
-		return new Tuple<CallOnceAction<T1, T2>, Action>(r, () => r.me = r);
 	}
 }
 /// <summary>
@@ -153,6 +153,14 @@ public class CallOnceFunction<TRresult> {
 		action = call;
 	}
 	/// <summary>
+	/// Returns a new Call once Function that can be reset using the returned Action
+	/// </summary>
+	public CallOnceFunction(Func<TRresult> call, out Action reset) {
+		me = this;
+		action = call;
+		reset = () => me = this;
+	}
+	/// <summary>
 	/// Call the Function. Will only work once. Calling this twice will result in a exception
 	/// </summary>
 	public TRresult Call() {
@@ -162,13 +170,6 @@ public class CallOnceFunction<TRresult> {
 			me = null;
 			return action();
 		}
-	}
-	/// <summary>
-	/// Returns a new Call once Function that can be reset using the returned Action
-	/// </summary>
-	public static Tuple<CallOnceFunction<TRresult>, Action> CreateWithReset(Func<TRresult> call) {
-		var r = new CallOnceFunction<TRresult>(call);
-		return new Tuple<CallOnceFunction<TRresult>, Action>(r, () => r.me = r);
 	}
 }
 /// <summary>
@@ -195,6 +196,14 @@ public class CallOnceFunction<T, TResult> {
 		action = call;
 	}
 	/// <summary>
+	/// Returns a new Call once Function that can be reset using the returned Action
+	/// </summary>
+	public CallOnceFunction(Func<T, TResult> call, out Action reset) {
+		me = this;
+		action = call;
+		reset = () => me = this;
+	}
+	/// <summary>
 	/// Call the Function. Will only work once. Calling this twice will result in a exception
 	/// </summary>
 	public TResult Call(T param) {
@@ -204,13 +213,6 @@ public class CallOnceFunction<T, TResult> {
 			me = null;
 			return action(param);
 		}
-	}
-	/// <summary>
-	/// Returns a new Call once Function that can be reset using the returned Action
-	/// </summary>
-	public static Tuple<CallOnceFunction<T, TResult>, Action> CreateWithReset(Func<T, TResult> call) {
-		var r = new CallOnceFunction<T, TResult>(call);
-		return new Tuple<CallOnceFunction<T, TResult>, Action>(r, () => r.me = r);
 	}
 }
 /// <summary>
@@ -237,6 +239,14 @@ public class CallOnceFunction<T1, T2, TResult> {
 		action = call;
 	}
 	/// <summary>
+	/// Returns a new Call once Function that can be reset using the returned Action
+	/// </summary>
+	public CallOnceFunction(Func<T1, T2, TResult> call, out Action reset) {
+		me = this;
+		action = call;
+		reset = () => me = this;
+	}
+	/// <summary>
 	/// Call the Function. Will only work once. Calling this twice will result in a exception
 	/// </summary>
 	public TResult Call(T1 param1, T2 param2) {
@@ -246,13 +256,6 @@ public class CallOnceFunction<T1, T2, TResult> {
 			me = null;
 			return action(param1, param2);
 		}
-	}
-	/// <summary>
-	/// Returns a new Call once Function that can be reset using the returned Action
-	/// </summary>
-	public static Tuple<CallOnceFunction<T1, T2, TResult>, Action> CreateWithReset(Func<T1, T2, TResult> call) {
-		var r = new CallOnceFunction<T1, T2, TResult>(call);
-		return new Tuple<CallOnceFunction<T1, T2, TResult>, Action>(r, () => r.me = r);
 	}
 }
 /// <summary>
@@ -266,12 +269,16 @@ public class SetOnceObject<TStorage> where TStorage : class {
 	/// <summary>
 	/// Safe storage for the actual value
 	/// </summary>
-	private TStorage? store = null;
+	private TStorage? store;
 	/// <summary>
 	/// Create a instance of a <see cref="SetOnceObject{TStorage}"/>
 	/// </summary>
 	public SetOnceObject() {
 	}
+	/// <summary>
+	/// Special constructor that allows the caller to set the value any time
+	/// </summary>
+	public SetOnceObject(out Action<TStorage> setValue) => setValue = (o) => store = o;
 	/// <summary>
 	/// Set the read only value
 	/// </summary>
@@ -301,13 +308,7 @@ public class SetOnceObject<TStorage> where TStorage : class {
 	/// Get the stored value
 	/// </summary>
 	public TStorage ToTStorage() => Get();
-	/// <summary>
-	/// Create a new <see cref="SetOnceStruct{TStorage}"/> where the caller gets a action that allows
-	/// </summary>
-	public static Tuple<SetOnceObject<TStorage>, Action<TStorage>> Create() {
-		var r = new SetOnceObject<TStorage>();
-		return new Tuple<SetOnceObject<TStorage>, Action<TStorage>>(r, (o) => r.store = o);
-	}
+
 	/// <summary>
 	/// Allows implicit conversations to the contained value
 	/// </summary>
@@ -335,6 +336,14 @@ public class SetOnceStruct<TStorage> where TStorage : struct {
 	/// Create a instance of a <see cref="SetOnceStruct{TStorage}"/>
 	/// </summary>
 	public SetOnceStruct() => me = this;
+	/// <summary>
+	/// Special constructor that allows the caller to set the value any time
+	/// </summary>
+	/// <param name="setValue"></param>
+	public SetOnceStruct(out Action<TStorage> setValue) {
+		me = this;
+		setValue = (o) => store = o;
+	}
 	/// <summary>
 	/// Set the read only value
 	/// </summary>
@@ -369,12 +378,5 @@ public class SetOnceStruct<TStorage> where TStorage : struct {
 	/// Get the stored value
 	/// </summary>
 	public TStorage ToTStorage() => store;
-	/// <summary>
-	/// Create a new <see cref="SetOnceStruct{TStorage}"/> where the caller gets a action that allows
-	/// </summary>
-	public static Tuple<SetOnceStruct<TStorage>, Action<TStorage>> Create() {
-		var r = new SetOnceStruct<TStorage>();
-		return new Tuple<SetOnceStruct<TStorage>, Action<TStorage>>(r, (o) => r.store = o);
-	}
 	public static implicit operator TStorage(SetOnceStruct<TStorage> targetStore) => targetStore == null ? default : targetStore.store;
 }

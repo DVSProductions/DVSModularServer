@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-namespace System; 
+namespace System;
 /// <summary>
 /// A collection of helpful functions and delegates in order to make your life easier
 /// </summary>
@@ -68,7 +66,7 @@ public static class ServerFrameWork {
 	public static string ReadQuery(Collections.Specialized.NameValueCollection collection) {
 		if(collection == null)
 			return "";
-		var ret = new StringBuilder().Append("[");
+		var ret = new StringBuilder().Append('[');
 		foreach(var k in collection.AllKeys)
 			ret.Append($"{k} = {collection.Get(k)}, ");
 		return ret.ToString().TrimEnd([',', ' ']) + "]";
@@ -129,7 +127,7 @@ public static class ServerFrameWork {
 			//		return o.ToString();
 			//}
 			knownOBJS.Add(o);
-			ret.Append("{");
+			ret.Append('{');
 			foreach(var p in o.GetType().GetRuntimeProperties()) {
 				ret.Append($"{p.Name} = ");
 				try {

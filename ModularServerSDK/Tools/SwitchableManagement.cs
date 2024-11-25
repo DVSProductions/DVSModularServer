@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace ModularServerSDK.Tools; 
+﻿namespace ModularServerSDK.Tools;
 /// <summary>
 /// A Class that Stores Cached versions of data.
 /// This can boost queries etc. MASSIVELY
@@ -23,6 +20,10 @@ public class SwitchableManagement<T> {
 	/// storage buffers
 	/// </summary>
 	private T A, B;
+	/// <summary>
+	/// used for locking the buffer swap
+	///	</summary>
+	private readonly Lock lockObj = new();
 
 	/// <summary>
 	/// Indicates which buffer gets exposed
@@ -69,13 +70,13 @@ public class SwitchableManagement<T> {
 	/// <param name="e"></param>
 	private protected void Thread() {
 		try {
-			if (useA)
+			if(useA)
 				UpdateHandler(ref B);
 			else
 				UpdateHandler(ref A);
 			useA = !useA;
 		}
-		catch (Exception ex) {
+		catch(Exception ex) {
 			C.WriteLineE(ex);
 		}
 		finally {
@@ -86,8 +87,8 @@ public class SwitchableManagement<T> {
 	/// Manually causes the buffers to update
 	/// </summary>
 	public void Update() {
-		lock (this) {
-			if (IsBusy)
+		lock(lockObj) {
+			if(IsBusy)
 				return;
 			IsBusy = true;
 		}
@@ -100,11 +101,11 @@ public class SwitchableManagement<T> {
 	/// <param name="updateDelay">Time between automatic updates</param>
 	public async void DoRegularUpdates(TimeSpan updateDelay) {
 		this.updateDelay = updateDelay;
-		if (runUpdates == false) {
+		if(!runUpdates) {
 			runUpdates = true;
-			while (runUpdates) {
+			while(runUpdates) {
 				await Task.Delay(this.updateDelay).ConfigureAwait(true);
-				if (runUpdates)
+				if(runUpdates)
 					Update();
 			}
 		}

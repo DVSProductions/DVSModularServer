@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -176,7 +174,7 @@ public partial class MainWindow : Window {
 			MessageBox.Show("No Server DLL Specified", "Error");
 			return;
 		}
-		
+
 		status[1] = true;
 		pb.IsIndeterminate = true;
 		var dlg = new Microsoft.Win32.SaveFileDialog() {
